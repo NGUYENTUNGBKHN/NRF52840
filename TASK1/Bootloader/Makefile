@@ -17,6 +17,8 @@ LDFLAGS+=
 
 LIBS+=
 
+ASMFLAG=
+
 
 SRC_FILES +=\
 	$(ROOT_PROJ)/main.c\

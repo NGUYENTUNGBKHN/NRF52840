@@ -45,9 +45,34 @@ $(if $(shell $(CC) --version),,$(info Cannot find: $(CC).) \
 	$(error Cannot continue))
 
 
+# $1 : source file
+# $2 : target name
+define get_object_file_name
+$(BUILD_DIR)/$(strip $(2))/$(notdir $(1:%.s=%.s.o)).o
+endef
+
+# $1 : target name
+# $2 : object file
+# $3 : source file
+define bind_object_with_src
+$(eval $(2):=$(3))\
+$(eval $(2)_TGT:=$(1))\
+$(eval $(2): Makefile | $(dir $(2)).)
+endef
+
 # $1 : target name
 # $2 : source file
 define get_object_file
+$(foreach src_file, $(2),\
+    $(eval obj_file := $(call get_object_file_name, $(src_file), $(1)))\
+    $(eval DEPENDENCIES += $(obj_file:%.o=%.d))\
+    $(call bind_object_with_src, $(1), $(obj_file), $(src_file))\
+    $(obj_file))
+endef
+
+# $1 : include folder path
+define get_inc_path
+$(foreach inc_folder, $(1), -I$(inc_folder))
 endef
 
 # $1 : Name variable
@@ -56,13 +81,15 @@ define target_specifies
 $($(addsuffix _$(strip $(2)), $(1)))
 endef
 
+INC_PATHS=$(call target_specifies, INC_PATHS, $($@_TGT))
+
 # $1 : target name
 # $2 : file out
 define prepare_build
 $(eval $(2): $(call get_object_file, $(1),\
-                $(SRC_FILE) $(call target_specifies, SRC_FILES, $(1))))\
+                $(SRC_FILES) $(call target_specifies, SRC_FILES, $(1))))\
 $(eval -include $(DEPENDENCIES))\
-$(eval INC_PATHS_$(strip $(1)): \
+$(eval INC_PATHS_$(strip $(1)):= \
     $(call get_inc_path,\
         $(INC_FOLDER) $(call target_specifies, INC_FOLDER, $(1))))
 endef
@@ -75,6 +102,49 @@ $(eval $(1): $(OUTPUT_FILE).out $(OUTPUT_FILE).hex $(OUTPUT_FILE).bin\
         ; @echo DONE $(1))\
 $(call prepare_build, $(1), $(OUTPUT_FILE).out)
 endef
+
+.PHONY: $(TARGET_NAME) all
+
+all: $(TARGET_NAME)
+
+
+$(BUILD_DIR):
+	$(MK) $@
+$(BUILD_DIR)/%/.: | $(BUILD_DIR)
+	cd $(BUILD_DIR) && $(MK) $*
+
+
+# $1 : compiler
+# $2 : flag
+# $3 : script
+define run
+$(info $(3) file : $(notdir $($@)))\
+$(NO_ECHO) $(1) -MD -MF -c -o $@ $(2) $($@) $(INC_PATHS)
+endef
+
+%.c.o:
+	echo $@
+    $(call run, $(CC) -std=c99, $(CCFLAGS), Compiling)
+
+%.cpp.o:
+    $(call run, $(CC), $(CCFLAGS) $(CXFLAGS), Compiling)
+
+%.S.o %.s.o.o: 
+	$(call run,$(CC) -x assembler-with-cpp, $(ASMFLAG), Assembling)
+
+
+%.out:
+	$(info Link target : $@)
+	$(NO_ECHO) $(CC) $(LDFLAGS) $(LIB_FILES) $^ -Wl,-Map=$(@:.out=.map) -o $@
+	$(NO_ECHO) $(SIZE) $@
+
+%.hex: %.out
+	$(info prepare hex : $@)
+	$(NO_ECHO) $(OBJCOPY) -O ihex $< $@
+
+%.bin: %.out
+	$(info prepare bin : $@)
+	$(NO_ECHO) $(OBJCOPY) -O binary $< $@
 
 
 endif  # check clean 
