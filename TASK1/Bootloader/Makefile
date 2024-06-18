@@ -5,19 +5,23 @@ OBJECT_DIR:=$(BUILD_DIR)/objs
 
 ROOT_PROJ:=./
 
+CPU=-mcpu=cortex-m4 -mthumb -mabi=aapcs
+FPU=-mfloat-abi=hard -mfpu=fpv4-sp-d16
+OPT=-O3 -g3
+
 # flag
-CCFLAGS+=
+CCFLAGS+=$(CPU) $(FPU) $(OPT)
+CCFLAGS+=-ffunction-sections -fdata-sections -fno-strict-aliasing
+CCFLAGS+=-fno-builtin -fshort-enums
+CCFLAGS+=-Wall -Werror
 
+LDFLAGS+=$(CPU) $(FPU) $(OPT)
+LDFLAGS+=-Wl,--gc-sections
+LDFLAGS+=--specs=nano.specs
 
-CXFLAGS+=
+LIBS+=-lc -lm
 
-
-LDFLAGS+=
-
-
-LIBS+=
-
-ASMFLAG=
+ASMFLAG+=$(CPU) $(FPU) $(OPT)
 
 
 SRC_FILES +=\

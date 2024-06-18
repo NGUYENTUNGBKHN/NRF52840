@@ -119,17 +119,16 @@ $(BUILD_DIR)/%/.: | $(BUILD_DIR)
 # $3 : script
 define run
 $(info $(3) file : $(notdir $($@)))\
-$(NO_ECHO) $(1) -MD -MF -c -o $@ $(2) $($@) $(INC_PATHS)
+$(NO_ECHO) $(1) -MD -MP -c -o $@ $(2) $($@) $(INC_PATHS)
 endef
 
 %.c.o:
-	echo $@
-    $(call run, $(CC) -std=c99, $(CCFLAGS), Compiling)
+	$(call run, $(CC) -std=c99, $(CCFLAGS), Compiling)
 
 %.cpp.o:
-    $(call run, $(CC), $(CCFLAGS) $(CXFLAGS), Compiling)
+	$(call run, $(CC), $(CCFLAGS) $(CXFLAGS), Compiling)
 
-%.S.o %.s.o.o: 
+%.S.o %.s.o.o:
 	$(call run,$(CC) -x assembler-with-cpp, $(ASMFLAG), Assembling)
 
 
