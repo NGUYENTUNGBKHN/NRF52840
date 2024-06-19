@@ -1,0 +1,10 @@
+{
+    "C_Cpp.default.compilerPath": "c:\\gcc-arm-none-eabi\\bin\\arm-none-eabi-gcc.exe",
+    "files.associations": {
+        "*.h": "c",
+        "stdint.h": "c",
+        "*.tcc": "c",
+        "cstdlib": "c",
+        "memory": "c"
+    }
+}
