@@ -30,7 +30,9 @@ extern "C"
 
 
 /* UART Register*/
-#define UART_BASE_ADDRESS 0x40002000
+#define UART0_BASE_ADDRESS   0x40002000
+#define UARTE0_BASE_ADDRESS  0x40002000
+
 
 
 

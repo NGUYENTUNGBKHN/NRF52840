@@ -4,7 +4,7 @@ INC_MAKE_DIR:=../Common
 OBJECT_DIR:=$(BUILD_DIR)/objs
 
 ROOT_PROJ:=./
-DRV_DIR:=./driver
+BARE_DRV_DIR:=./driver/bare_driver
 
 $(BUILD_DIR)/$(TARGET_NAME).out:\
 	LINKER_SCRIPT := boot.ld
@@ -17,7 +17,7 @@ OPT=-O3 -g3
 CCFLAGS+=$(CPU) $(FPU) $(OPT)
 CCFLAGS+=-ffunction-sections -fdata-sections -fno-strict-aliasing
 CCFLAGS+=-fno-builtin -fshort-enums
-CCFLAGS+=-Wall -Werror
+CCFLAGS+=-Wall -Wno-unused-variable
 
 LDFLAGS+=$(CPU) $(FPU) $(OPT)
 LDFLAGS+=-Wl,--gc-sections
@@ -32,13 +32,15 @@ ASMFLAG+=$(CPU) $(FPU) $(OPT)
 SRC_FILES +=\
 	$(ROOT_PROJ)/main.c\
 	$(ROOT_PROJ)/boot_startup.c\
-	$(DRV_DIR)/Uart/drv_uart.c\
+	$(BARE_DRV_DIR)/Uart/drv_uart.c\
 
 
 INC_FOLDER +=\
 	$(ROOT_PROJ)\
-	$(DRV_DIR)/Common\
-	$(DRV_DIR)/Uart\
+	$(BARE_DRV_DIR)/Common\
+	$(BARE_DRV_DIR)/Uart\
+	$(BARE_DRV_DIR)/core\
+	$(NRF52_SDK)\
 
 
 .PHONY: default help
@@ -55,7 +57,10 @@ help:
 	echo "help"
 
 
-flash:
-	echo "flash"
+flash: default
+	Jlink.exe -if swd -device nRF52840_xxAA -speed 4000 -CommanderScript CommanderScript/build_windows.jlink
+
+erase:
+	Jlink.exe -if swd -device nRF52840_xxAA -speed 4000 -CommanderScript CommanderScript/erase_windows.jlink
 
 

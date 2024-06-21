@@ -13,7 +13,11 @@
 #include "drv_uart.h"
 
 #define DRV_UART_MAX_BUFF 256
-
+#define RX_PIN_NUMBER 8
+#define TX_PIN_NUMBER 6
+#define CTS_PIN_NUMBER 7
+#define RTS_PIN_NUMBER 5
+#define PORT0 0
 
 /******************************************************************************/
 /* Constructor
@@ -33,6 +37,7 @@ static void drv_uart_init(drv_uart_t* const self,
                     uint32_t send_buff_size,
                     uint32_t received_buff_size)
 {
+    self->instance = uart0;
     self->send = send;
     self->received = received;
     self->config = config;
@@ -53,6 +58,22 @@ uint32_t drv_uart_received(drv_uart_t* const self)
 
 uint32_t drv_uart_config(drv_uart_t* const self)
 {
+    self->instance->BAUDRATE = UART_BAUDRATE_115200;        /* 115200 baud */
+    self->instance->CONFIG = UART_CONFIG_HWFC_DIS |         /* hard flow off */
+                            UART_CONFIG_PARITY_EXE |        /* parity exc */
+                            UART_CONFIG_STOP_ONE ;          /* stop bit one */
+    self->instance->ENABLE = UART_ENABLE_REGISTER_EN;       /* enable uart */
+    self->instance->PSEL_RXD = UART_RXD_CONNECT | 
+                            (PORT0 << UART_RXD_PORT_POS) | 
+                            (RX_PIN_NUMBER << UART_RXD_PIN_POS);
+    self->instance->PSEL_TXD = UART_TXD_CONNECT |
+                            (PORT0 << UART_TXD_PORT_POS) | 
+                            (TX_PIN_NUMBER << UART_TXD_PIN_POS);
+    
+    /* interrupt */
+    self->instance->INTENSET = UART_INTENSET_TXDRDY_EN;
+    self->instance->TASKS_STARTTX = 0x01;
+    
     return 0;
 }
 

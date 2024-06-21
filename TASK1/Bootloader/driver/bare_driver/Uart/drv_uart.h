@@ -136,11 +136,12 @@ typedef struct UartType_s
 
 
 
-#define uart0 ((UartType_t*) UART_BASE_ADDRESS)
+#define uart0 ((UartType_t*) UART0_BASE_ADDRESS)
 
 typedef struct drv_uart_s drv_uart_t;
 struct drv_uart_s
 {
+    UartType_t *instance;
     /* data */
     uint8_t *send_buffer;
     uint8_t *receive_buffer;

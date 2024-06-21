@@ -28,7 +28,9 @@ SECTIONS
 
     .bss : 
     {
+        s_bss = .;
         *(.bss)
+        e_bss = .;
     } > RAM
 
     _estack = ORIGIN(RAM) + LENGTH(RAM);
