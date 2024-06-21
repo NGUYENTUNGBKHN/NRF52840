@@ -19,7 +19,7 @@ $(error stop)
 else                        # only clean
 .PHONY: clean
 clean:
-    $(RM) $(BUILD_DIR)
+	$(RM) $(BUILD_DIR)
 endif 
 else    # clean not exist
 
