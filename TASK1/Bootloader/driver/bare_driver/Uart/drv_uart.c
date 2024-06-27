@@ -48,6 +48,7 @@ static void drv_uart_init(drv_uart_t* const self,
 
 uint32_t drv_uart_send(drv_uart_t* const self)
 {
+
     return 0;    
 }
 
@@ -58,11 +59,11 @@ uint32_t drv_uart_received(drv_uart_t* const self)
 
 uint32_t drv_uart_config(drv_uart_t* const self)
 {
-    self->instance->BAUDRATE = UART_BAUDRATE_115200;        /* 115200 baud */
-    self->instance->CONFIG = UART_CONFIG_HWFC_DIS |         /* hard flow off */
-                            UART_CONFIG_PARITY_EXE |        /* parity exc */
-                            UART_CONFIG_STOP_ONE ;          /* stop bit one */
-    self->instance->ENABLE = UART_ENABLE_REGISTER_EN;       /* enable uart */
+    self->instance->BAUDRATE = UART_BAUDRATE_115200;                    /* 115200 baud */
+    self->instance->CONFIG = UART_CONFIG_HWFC_DIS |                     /* hard flow off */
+                            UART_CONFIG_PARITY_EXE |                    /* parity exc */
+                            UART_CONFIG_STOP_ONE ;                      /* stop bit one */
+    self->instance->ENABLE = UART_ENABLE_REGISTER_EN;                   /* enable uart */
     self->instance->PSEL_RXD = UART_RXD_CONNECT | 
                             (PORT0 << UART_RXD_PORT_POS) | 
                             (RX_PIN_NUMBER << UART_RXD_PIN_POS);

@@ -22,6 +22,7 @@ int main()
 {
 
     uint32_t switch_mode = 0;
+    
     if (switch_mode)
     {
         jump_to_bootloader();
@@ -43,14 +44,15 @@ int main()
 
 static void jump_to_bootloader()
 {
-
+    bootloader_proc();
 }
 
 
 static void jump_to_app()
 {
+    /* Declared function reset handler of application layer*/
     void (*reset_handler)(void);
-
+    /*  */
     uint32_t addr_msp_of_app = (*(volatile uint32_t*)(ADDR_MSP_OF_APP));
 
     __set_MSP(addr_msp_of_app);

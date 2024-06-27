@@ -19,6 +19,7 @@ extern "C"
 #endif
 
 /* CODE */
+extern void bootloader_proc();
 
 #ifdef __cplusplus
 }

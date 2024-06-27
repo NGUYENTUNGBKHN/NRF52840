@@ -9,7 +9,25 @@
     @par        Copyright (C)
     Japan CashMachine Co, Limited. All rights reserved.
 ******************************************************************************/
+static void bootloader_start()
+{
 
+}
+
+static void bootloader_download()
+{
+
+}
+
+static void bootloader_end()
+{
+
+}
+
+void bootloader_proc()
+{
+
+}
 
 
 
