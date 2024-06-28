@@ -1,5 +1,5 @@
 {
-    "C_Cpp.default.compilerPath": "c:\\gcc-arm-none-eabi\\bin\\arm-none-eabi-gcc.exe",
+    "C_Cpp.default.compilerPath": "C:\\MinGW\\bin\\gcc.exe",
     "files.associations": {
         "*.h": "c",
         "stdint.h": "c",

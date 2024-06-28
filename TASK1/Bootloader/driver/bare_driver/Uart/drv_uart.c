@@ -48,7 +48,7 @@ static void drv_uart_init(drv_uart_t* const self,
 
 uint32_t drv_uart_send(drv_uart_t* const self)
 {
-
+    
     return 0;    
 }
 
