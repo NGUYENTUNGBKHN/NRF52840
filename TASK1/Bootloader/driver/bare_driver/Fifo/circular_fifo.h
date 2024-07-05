@@ -18,20 +18,26 @@ extern "C"
 #endif
 
 /* CODE */
+#include <stdio.h>
+#include <stdlib.h>
 #include <stdint.h>
+
+#define BUFFER_SIZE 128
 
 typedef struct circular_fifo_s circular_fifo;
 
 struct circular_fifo_s
 {
     /* data */
-
+    uint8_t next;
+    uint8_t first;
+    uint8_t Buffer[BUFFER_SIZE + 1]; /* It needs 1 extra byte to difference full and empty */
     /* function */
-    uint8_t (*isFull)(void);
-    uint8_t (*isEmpty)(void);
-    uint8_t (*getElement)(void);
-    uint8_t (*addElement)(uint8_t data);
-    uint8_t (*getNumOfElement)(void);
+    uint8_t (*isFull)(circular_fifo *self);
+    uint8_t (*isEmpty)(circular_fifo *self);
+    uint8_t (*getElement)(circular_fifo *self);
+    uint8_t (*addElement)(circular_fifo *self, uint8_t data);
+    uint8_t (*getNumOfElement)(circular_fifo *self);
 
 };
 

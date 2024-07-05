@@ -146,6 +146,8 @@ struct drv_uart_s
     uint8_t *send_buffer;
     uint8_t *receive_buffer;
     uint8_t status;
+    uint32_t send_size;
+    uint32_t received_size;
     /* function */
     uint32_t (*config)(drv_uart_t* const self);
     uint32_t (*send)(drv_uart_t* const self);

@@ -41,6 +41,8 @@ static void drv_uart_init(drv_uart_t* const self,
     self->send = send;
     self->received = received;
     self->config = config;
+    self->send_size = send_buff_size;
+    self->received_size = received_buff_size;
     self->status = DRV_UART_INIT;
     self->send_buffer = (uint8_t*)malloc(send_buff_size*sizeof(uint8_t*)); 
     self->receive_buffer = (uint8_t*)malloc(received_buff_size*sizeof(uint8_t*));
@@ -48,7 +50,11 @@ static void drv_uart_init(drv_uart_t* const self,
 
 uint32_t drv_uart_send(drv_uart_t* const self)
 {
-    
+    for(uint16_t index; index < self->send_size; index++)
+    {
+        self->instance->TXD = self->send_buffer[index];
+        
+    }
     return 0;    
 }
 

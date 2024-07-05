@@ -32,6 +32,22 @@ void HardFault_Handler()
     while(1);
 }
 
+void default_handler()
+{
+    while (1)
+    {
+        /* code */
+    }
+}
+
+void MemoryManaFault_Handler(void) __attribute((weak, alias("default_handler")));
+void BusFault_Handler(void) __attribute((weak, alias("default_handler")));
+void UsageFault_Handler(void) __attribute((weak, alias("default_handler")));
+void SVC_Handler(void) __attribute((weak, alias("default_handler")));
+void DebugMon_Handler(void) __attribute((weak, alias("default_handler")));
+void PendSV_Handler(void); __attribute((weak, alias("default_handler")));
+void Systick_Handler(void); __attribute((weak, alias("default_handler")));
+
 __attribute((section(".isr_vector")))
 uint32_t *_isr_vector[] = 
 {
@@ -39,6 +55,16 @@ uint32_t *_isr_vector[] =
     (uint32_t*)Reset_Handler,
     (uint32_t*)NMI_Handler,
     (uint32_t*)HardFault_Handler,
-
+    (uint32_t*)MemoryManaFault_Handler,
+    (uint32_t*)BusFault_Handler,
+    (uint32_t*)UsageFault_Handler,
+    0,
+    0,
+    0,
+    0,
+    (uint32_t*)SVC_Handler,
+    (uint32_t*)DebugMon_Handler,
+    (uint32_t*)PendSV_Handler,
+    (uint32_t*)Systick_Handler,
 };
 
