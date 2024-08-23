@@ -53,7 +53,11 @@ uint32_t drv_uart_send(drv_uart_t* const self)
     for(uint16_t index; index < self->send_size; index++)
     {
         self->instance->TXD = self->send_buffer[index];
-        
+        while(self->instance->EVENTS_TXDRDY != 0x01)
+        {
+            
+        }
+        self->instance->EVENTS_TXDRDY = 0x00;
     }
     return 0;    
 }
