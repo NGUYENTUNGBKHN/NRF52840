@@ -14,8 +14,7 @@ ifneq (,$(filter clean, $(MAKECMDGOALS))) # clean existed
 OTHER_GOALS:=$(filter-out clean, $(MAKECMDGOALS))
 
 ifneq ($(OTHER_GOALS),)     # not only clean 
-$(info Cannot do command)\
-$(error stop)
+
 else                        # only clean
 .PHONY: clean
 clean:
