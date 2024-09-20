@@ -1,44 +1,53 @@
-TARGETS:=bootloader
-PROJ_DIR:=
+TARGET_NAME:=boot
 BUILD_DIR:=_build
-MAKECOMMON_DIR:=../Common
+MAKE_COMMON:=../Common
 
 
-
-CFLAGS:=
-
-ASMFLAGS:=
-
-LDFLAS:=
+ROOT_PROJ:=./
 
 
-LIBS:=
+CCFLAGS=\
 
 
-SRC_FILES:=\
+CXFLAGS=\
 
 
-INC_FOLDER:=\
+ASMFLAG=\
+
+
+LDFLAGS=\
+
+
+SRC_FILES=\
+	$(ROOT_PROJ)/main.c\
+
+
+INC_FOLDER=\
+
+
+LIBS=\
+
 
 
 .PHONY:	default help
 
-default: $(TARGETS)
-
-include $(MAKECOMMON_DIR)/Makefile.common
+default: $(TARGET_NAME)
 
 
-$(foreach target, $(TARGETS), $(call define_targets, $(target)))
+include $(MAKE_COMMON)/Makefile.common
+
+
+$(foreach target, $(TARGET_NAME), $(call define_target, $(target)))
+
 
 
 help:
-	echo help
+	@echo  help
+
 
 
 flash:
 
 
-earase:
-
-
+erase:
 

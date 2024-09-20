@@ -3,35 +3,29 @@ RM:=rm -r
 
 DEBUG ?= 0
 
-
 ifneq ($(DEBUG),1)
 NO_ECHO=@
 else
 NO_ECHO=
 endif
 
-
-ifneq (,$(filter clean, $(MAKECMDGOALS))) # clean existed
-
-OTHERS:=$(filter-out clean, $(MAKECMDGOALS))
-
+ifneq (,$(filter clean, $(MAKECMDGOALS)))  # clean existed
+OTHERS=$(filter-out clean, $(MAKECMDGOALS))
 ifeq (,$(OTHERS))
 .PHONY: clean
 clean:
-	$(NO_ECHO)echo clean build
-	$(NO_ECHO)$(RM) $(BUILD_DIR)
+	$(NO_ECHO)echo clean target
+	$(RM) $(BUILD_DIR)
 else
-$(info $(OTHERS) is not supported)
-$(error Stop.)
-endif
 
-else   # not clean 
+endif # end OTHER
 
+else # not clean
 
-###### TOOLCHAIN ########
+# # # # # # # # TOOLCHAIN # # # # # # # # # #
 
 PLATFORM_SUFFIX := $(if $(filter Windows%,$(OS)),windows,posix)
-TOOLCHAIN_CONFIG_FILE := $(MAKECOMMON_DIR)/Makefile.$(PLATFORM_SUFFIX)
+TOOLCHAIN_CONFIG_FILE := $(MAKE_COMMON)/Makefile.$(PLATFORM_SUFFIX)
 include $(TOOLCHAIN_CONFIG_FILE)
 
 # $1 path
@@ -54,70 +48,86 @@ $(if $(shell $(CC) --version),,$(info Cannot find: $(CC).) \
   $(info according to the actual configuration of your system.) \
   $(error Cannot continue))
 
-#########################
+
+# # # # # # # # # # # # # # # # # # # # # # #
+
+# $1 : type of item 
+# $2 : items paths to check
+define ensure_exists_each
+$(foreach item, $(2), \
+    $(if $(wildcard $(item)),, $(warning Cannot find $(1) : $(item))))
+endef
 
 
 # $1 : target name
 # $2 : source file
 # $3 : object file
 define bind_object_with_src
-$(eval $(3) := $(2))\
-$(eval $(3)_TGT := $(1))\
-$(eval $(3) : Makefile | $(dir $(2)).)
+$(eval $(3)     :=  $(2))\
+$(eval $(3)_TGT :=  $(1))\
+$(eval $(3)     : Makefile | $(dir $(3)).)
+endef
+
+# $1 : target name
+# $2 : source file
+define get_object_file_name
+$(BUILD_DIR)/$(strip $(1))/$(notdir $(2:%.s=%.s.o)).o
+endef
+
+# $1 : target name
+# $2 : source file
+define get_object_file
+$(call ensure_exists_each, source file, $(2))\
+$(foreach src_file, $(2),\
+    $(eval obj_file:=$(call get_object_file_name, $(1), $(src_file)))\
+    $(eval DEPENDENCIES += $(obj_file:%.o=%.d))\
+    $(call bind_object_with_src, $(1), $(src_file), $(obj_file))\
+    $(obj_file)
+    )
+endef
+
+# $1 : targe name
+# $2 : inc folder
+define get_inc_path
+$(foreach inc, $(2), -I$(inc))
 endef
 
 
-# $1 : target 
-# $2 : flag 
+# $1 : target name
+# $2 : flag
 define target_specifies
 $($(addsuffix _$(strip $(1)), $(2)))
 endef
 
-# $1 : target name
-# $2 : source files
-define get_object_file
-$(foreach src_file, $(2),\
-		$(eval obj_file := $(get_object_file_names ,$(src_file), $(1)))\
-		$(eval DEPENDENCES += $(obj_file:%.o=%.d))\
-		$(call bind_object_with_src ,$(1), $(src_file), $(obj_file))\
-		$(obj_file)\
-		)
-endef
-
-# $1 : include folder
-define get_inc_path
-$(foreach inc_folder, $(1), -I$(inc_folder))
-endef
+INC_PATHS=$(call target_specifies, $($@_TGT), INC_PATHS)
 
 
 # $1 : target name
 # $2 : output file
 define prepare_build
-$(eval DEPENDENCES:=)\
-$(eval $(2) : $(call get_object_file, $(1), \
-				$(SRC_FILES) $(call target_specifies, $(1), SRC_FILES)))\
-$(eval -include $(DEPENDENCES))\
-$(eval INC_PATH_$(strip $(1)):= \
-	$(call get_inc_path, \
-		$(INC_FOLDER) $(call target_specifies, $(1), INC_FOLDER)))
+$(eval DEPENDENCIES:=)\
+$(eval $(2) : $(call get_object_file, $(1),\
+    $(SRC_FILES) $(call target_specifies, $(1), SRC_FILES)))\
+$(eval -include $(DEPENDENCIES))\
+$(eval INC_PATHS_$(strip $(1)) := \
+	$(call get_inc_paths, \
+    	$(INC_FOLDERS) $(call target_specific, INC_FOLDERS, $(1))))
 endef
 
 
-#
-#
 # $1 : target name
-define define_targets
-$(eval OUTPUT_FILES:=$(BUILD_DIR)/$(strip $(1)))\
-$(eval $(1): $(OUTPUT_FILE).out $(OUTPUT_FILE).bin $(OUTPUT_FILE).hex \
-		; @echo DONE $(1))\
+define define_target
+$(eval OUTPUT_FILE:=$(BUILD_DIR)/$(strip $(1)))\
+$(eval $(1) : $(OUTPUT_FILE).out $(OUTPUT_FILE).hex $(OUTPUT_FILE).bin\
+        ; @echo DONE $(1).)\
 $(call prepare_build, $(1), $(OUTPUT_FILE).out)
 endef
 
 
+.PHONY: $(TARGET_NAME) all
 
-.PHONY: $(TARGETS) all
+all: $(TARGET_NAME)
 
-all : $(TARGETS)
 
 $(BUILD_DIR):
 	$(MK) $@
@@ -125,16 +135,38 @@ $(BUILD_DIR)/%/.: | $(BUILD_DIR)
 	cd $(BUILD_DIR) && $(MK) $*
 
 
+# $1 : compiler
+# $2 : flag
+# $3 : script
+define run
+$(info $(3) file : $(notdir $($@)))\
+$(NO_ECHO) $(1) -MD -MP -c -o $@ $(2) $($@) $(INC_PATHS)
+endef
+
+%.c.o:
+	$(call run, $(CC), $(CCFLAGS), Compiling)
+
+%.s.o.o %.S.o:
+	$(call run, $(CC), $(ASMFLAG), Assembling)
+
+%.cpp.o:
+	$(call run, $(CC), $(CCFLAGS) $(CXFLAGS), Compiling)
 
 
+%.out:
+	$(NO_ECHO)$(CC) $(LDFLAGS) $(LIBS) -Wl,-Map=$(@:.out=.map) -o $@
+	$(NO_ECHO)$(SIZE) $@
+
+%.bin: %.out
+	$(info Preparing: $@)
+	$(NO_ECHO)$(OBJCOPY) -O binary $< $@
+
+%.hex: %.out
+	$(info Preparing: $@)
+	$(NO_ECHO)$(OBJCOPY) -O ihex $< $@
 
 
-endif 
-
-
-
-
-
+endif
 
 
 
