@@ -82,7 +82,7 @@ $(foreach src_file, $(2),\
     $(eval obj_file:=$(call get_object_file_name, $(1), $(src_file)))\
     $(eval DEPENDENCIES += $(obj_file:%.o=%.d))\
     $(call bind_object_with_src, $(1), $(src_file), $(obj_file))\
-    $(obj_file)
+    $(obj_file)\
     )
 endef
 
@@ -154,7 +154,8 @@ endef
 
 
 %.out:
-	$(NO_ECHO)$(CC) $(LDFLAGS) $(LIBS) -Wl,-Map=$(@:.out=.map) -o $@
+	$(info Link target : $@)
+	$(NO_ECHO)$(CC) $(LDFLAGS) $(LIBS) $^ -Wl,-Map=$(@:.out=.map) -o $@
 	$(NO_ECHO)$(SIZE) $@
 
 %.bin: %.out
