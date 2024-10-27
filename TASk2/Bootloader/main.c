@@ -7,7 +7,6 @@
 #define RTS_PIN_NUMBER 5
 #define PORT0 0
 
-int tung = 6;
 
 int logPrintf(const char *str)
 {

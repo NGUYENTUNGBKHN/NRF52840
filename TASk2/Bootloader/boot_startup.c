@@ -29,15 +29,15 @@ void Reset_Handler()
         *start++ = *data++;
     }
     // /* implement main function */
-    // start = &_sbss;
-    // end = &_ebss;
+    start = &_sbss;
+    end = &_ebss;
 
-    // /* setup bss data = 0 */
-    // while (start < end)
-    // {
-    //     /* code */
-    //     *start++ = 0;
-    // }
+    /* setup bss data = 0 */
+    while (start < end)
+    {
+        /* code */
+        *start++ = 0;
+    }
     
 
     main();
