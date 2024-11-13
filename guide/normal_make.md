@@ -12,9 +12,9 @@ OBJS_DIR is direction of objects file folder
     + CPU : -mcpu=cortex-m4 => CPU delared cortex chip
     + FPU : -mfpu=fpv4-sp-d16
         **** floating point unit is a part of system computer, it carry out operation on floating-point numbers
-    + OPT : optimize 
-    + -Wall :
-    + -Werror : 
+    + OPT : optimization 
+    + -Wall : Warning all
+    + -Werror :  
     + -ffunction-section : 
     + fdata-section :
     + -fno-strict-aliasing : 
