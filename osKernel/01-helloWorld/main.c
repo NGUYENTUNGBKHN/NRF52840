@@ -44,7 +44,7 @@ int main()
 {
     logInit();
 
-    logPrintf("Hello World \n");
+    logPrintf("Hello World use Make Common \n");
     while(1)
     {
         

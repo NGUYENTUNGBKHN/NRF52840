@@ -10,12 +10,12 @@ LINKER_SCRIPT=link.ld
 
 GNU_PREFIX=arm-none-eabi-
 
-CC=$(TOOLCHAIN_TUNG)/$(GNU_PREFIX)gcc
-CX=$(TOOLCHAIN_TUNG)/$(GNU_PREFIX)gcc
-AS=$(TOOLCHAIN_TUNG)/$(GNU_PREFIX)gcc -x assembler-with-cpp
-LD=$(TOOLCHAIN_TUNG)/$(GNU_PREFIX)ld
-SZ=$(TOOLCHAIN_TUNG)/$(GNU_PREFIX)size
-CP=$(TOOLCHAIN_TUNG)/$(GNU_PREFIX)objcopy
+CC='$(TOOLCHAIN_TUNG)/$(GNU_PREFIX)gcc'
+CX='$(TOOLCHAIN_TUNG)/$(GNU_PREFIX)gcc'
+AS='$(TOOLCHAIN_TUNG)/$(GNU_PREFIX)gcc' -x assembler-with-cpp
+LD='$(TOOLCHAIN_TUNG)/$(GNU_PREFIX)ld'
+SZ='$(TOOLCHAIN_TUNG)/$(GNU_PREFIX)size'
+CP='$(TOOLCHAIN_TUNG)/$(GNU_PREFIX)objcopy'
 
 HEX=$(CP) -O ihex
 BIN=$(CP) -O binary -S
@@ -38,8 +38,8 @@ ASMFLAG= $(MCU)
 ASMFLAG+= -g3
 
 LDFLAG = $(MCU) $(OPT) 
-LDFLAG += $(LINKER_SCRIPT) --specs=nano.specs
-LDFLAG += -Wl,--gc-sections,-Map=$(OUTPUT_PROJ_DIR)/$(TARGET).map
+LDFLAG += -T$(LINKER_SCRIPT) --specs=nano.specs
+LDFLAG += -Wl,--gc-sections,-Map=$(BUILD_DIR)/$(TARGET).map
 
 LIBS += -lc -lm -lnosys
 
@@ -60,9 +60,7 @@ OBJECTS+=$(patsubst %.s,$(OBJS_DIR)/%.s.o,$(ASM_FILE))
 
 default: all
  
-all: $(BUILD_DIR)/$(TARGET).out\ 
-	$(BUILD_DIR)/$(TARGET).hex\
-	$(BUILD_DIR)/$(TARGET).bin
+all: $(BUILD_DIR)/$(TARGET).out $(BUILD_DIR)/$(TARGET).hex $(BUILD_DIR)/$(TARGET).bin
 
 
 
@@ -84,11 +82,11 @@ $(BUILD_DIR)/$(TARGET).out: $(OBJECTS)
 
 $(BUILD_DIR)/$(TARGET).hex: $(BUILD_DIR)/$(TARGET).out
 	@echo "HEX $@"
-	$(HEX) $@
+	@$(HEX) $< $@
 
 $(BUILD_DIR)/$(TARGET).bin: $(BUILD_DIR)/$(TARGET).out
 	@echo "BIN $@"
-	$(BIN) $@
+	@$(BIN) $< $@
 
 
 clean:
@@ -96,6 +94,11 @@ clean:
 	@rm -r $(BUILD_DIR)
 
 
+flash: default
+	Jlink.exe -if swd -device nRF52840_xxAA -speed 4000 -CommanderScript CommanderScript/build_windows.jlink
+
+erase:
+	Jlink.exe -if swd -device nRF52840_xxAA -speed 4000 -CommanderScript CommanderScript/erase_windows.jlink
 
 
 

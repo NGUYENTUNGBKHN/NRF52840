@@ -15,10 +15,11 @@ extern int main();
 
 void Reset_Handler()
 {
-    uint32_t *data = &_sidata;
+    uint32_t *data;
     uint32_t *begin;
     uint32_t *end;
 
+    data = &_sidata;
     begin = &_sdata;
     end = &_edata;
 
