@@ -86,7 +86,7 @@ $(foreach src_file, $(2),\
     )
 endef
 
-# $1 : targe name
+# $1 : target name
 # $2 : inc folder
 define get_inc_path
 $(foreach inc, $(2), -I$(inc))
@@ -100,6 +100,13 @@ $($(addsuffix _$(strip $(1)), $(2)))
 endef
 
 INC_PATHS=$(call target_specifies, $($@_TGT), INC_PATHS)
+
+
+# $1 : include folder
+# 
+define get_inc_paths
+$(foreach inc, $(1), -I$(inc))
+endef
 
 
 # $1 : target name

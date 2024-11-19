@@ -4,6 +4,10 @@ MAKE_COMMON:=../Common
 
 
 ROOT_PROJ:=./
+INC_COMMON:=$(ROOT_PROJ)/inc_common
+MID_DIR:=$(ROOT_PROJ)/Middleware
+DRV_DIR:=$(ROOT_PROJ)/Driver
+
 
 $(BUILD_DIR)/$(TARGET_NAME).out: \
 	LINKER_SCRIPT := $(ROOT_PROJ)/boot.ld
@@ -24,11 +28,16 @@ LDFLAGS+=--specs=nano.specs
 LDFLAGS+=-T$(LINKER_SCRIPT) -mthumb -mabi=aapcs
 
 
-SRC_FILES=\
-	$(ROOT_PROJ)/main.c\
-	$(ROOT_PROJ)/boot_startup.c\
+# SRC_FILES=\
+# 	$(ROOT_PROJ)/main.c\
+# 	$(ROOT_PROJ)/boot_startup.c\
 
-INC_FOLDER=\
+SRC_FILES+=$(wildcard *.c)
+SRC_FILES+=$(wildcard $(MID_DIR)/log/*.c)
+
+INC_FOLDERS=\
+	$(INC_COMMON)\
+	$(MID_DIR)/log\
 
 LIBS+=-lc -lm
 
