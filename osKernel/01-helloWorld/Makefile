@@ -9,7 +9,7 @@ $(BUILD_DIR)/$(TARGET_NAME).out: \
 	LINKER_SCRIPT := $(ROOT_PROJ)/link.ld
 
 CPU=-mcpu=cortex-m4 -mthumb -mabi=aapcs
-FPU=-mfloat-abi=hard -mfpu=fpv4-sp-d16
+FPU=-mfloat-abi=hard -mfpu=fpv4-sp-d16 
 OPT=-O3 -g3
 CCFLAGS+=$(CPU) $(FPU) $(OPT)
 CCFLAGS+=-ffunction-sections -fdata-sections -fno-strict-aliasing
@@ -19,7 +19,7 @@ CCFLAGS+=-Wall -Wno-unused-variable
 ASMFLAG+=$(CPU) $(FPU) $(OPT)
 
 LDFLAGS+=$(CPU) $(FPU) $(OPT)
-LDFLAGS+=-Wl,--gc-sections
+LDFLAGS+=-Wl,--gc-sections,-Map=$(BUILD_DIR)/$(TARGET_NAME).map
 LDFLAGS+=--specs=nano.specs
 LDFLAGS+=-T$(LINKER_SCRIPT) -mthumb -mabi=aapcs
 
