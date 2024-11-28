@@ -5,6 +5,7 @@ MAKE_COMMON:=../Common
 
 ROOT_PROJ:=./
 INC_COMMON:=$(ROOT_PROJ)/inc_common
+BARE_CORE:=$(ROOT_PROJ)/bare_core
 MID_DIR:=$(ROOT_PROJ)/Middleware
 DRV_DIR:=$(ROOT_PROJ)/Driver
 
@@ -38,6 +39,7 @@ SRC_FILES+=$(wildcard $(MID_DIR)/log/*.c)
 INC_FOLDERS=\
 	$(INC_COMMON)\
 	$(MID_DIR)/log\
+	$(BARE_CORE)\
 
 LIBS+=-lc -lm
 

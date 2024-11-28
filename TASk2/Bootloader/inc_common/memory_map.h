@@ -17,9 +17,10 @@ extern "C"
 {
 #endif
 
+#include "core.h"
 /* CODE */
 
-#define ADDR_APP_BEGIN  0x00010000
+#define ADDR_APP_BEGIN  0x000E0000
 
 
 #ifdef __cplusplus
