@@ -20,28 +20,42 @@ extern "C"
 #include <stdint.h>
     /* CODE */
 
+#define ARM_GCC_COMPILER
+
 #ifndef __STATIC_INLINE
 #define __STATIC_INLINE static __inline
 #endif
 
-#ifndef   __STATIC_FORCEINLINE                 
-  #define __STATIC_FORCEINLINE                   __attribute__((always_inline)) static inline
-#endif 
+#ifndef __STATIC_FORCEINLINE
+#define __STATIC_FORCEINLINE __attribute__((always_inline)) static inline
+#endif
 
 #ifndef __ASM
 #define __ASM asm
 #endif
 
-__STATIC_INLINE uint32_t __get_MSP(void)
-{
-    register uint32_t __regMainStackPointer __ASM("msp");
-    return (__regMainStackPointer);
-}
+    __STATIC_INLINE uint32_t __get_MSP(void)
+    {
+        #if defined(ARM_GCC_COMPILER)
+        uint32_t result;
+        __ASM volatile("MRS %0, msp" : "=r" (result));
+        return result;
+        #else
+        register uint32_t __regMainStackPointer __ASM("msp");
+        return (__regMainStackPointer);
+        #endif 
+        
+    }
 
-__STATIC_FORCEINLINE void __set_MSP(uint32_t topOfMainStack)
-{
-  __ASM volatile ("MSR msp, %0" : : "r" (topOfMainStack) : );
-}
+    __STATIC_FORCEINLINE void __set_MSP(uint32_t topOfMainStack)
+    {
+        #if defined(ARM_GCC_COMPILER)
+        __ASM volatile("MSR msp, %0" : : "r"(topOfMainStack) :);
+        #else
+        register uint32_t __regProcessStackPointer  __ASM("psp");
+        __regProcessStackPointer = topOfProcStack;
+        #endif 
+    }
 
 #ifdef __cplusplus
 }
