@@ -1,28 +1,20 @@
-
 ENTRY(Reset_Handler)
 
 
 MEMORY
 {
-    FLASH(rx) : ORIGIN = 0x00, LENGTH = 0xE0000
-    RAM (rwx) : ORIGIN = 0x20000000, LENGTH = 0x20000 
+    FLASH(rx) : ORIGIN = 0x000E0000, LENGTH = 0x1E000
+    RAM(rwx) :   ORIGIN = 0x20020000, LENGTH = 0x20000 
 }
 
 SECTIONS
 {
-    /* .myTest :
-    {
-        __my_test_start = .;
-        KEEP(*(.BOOT_SECTION_HEADER))
-        __my_test_end = .;
-    } >FLASH */
-
     .text :
     {
-        KEEP(*(.isr_vector))
         __my_test_start = .;
-        KEEP(*(.BOOT_SECTION_HEADER))
+        KEEP(*(.APP_SECTION_HEADER))
         __my_test_end = .;
+        KEEP(*(.isr_vector))
         *(.text)
         *(.text.*)
         *(.rodata)

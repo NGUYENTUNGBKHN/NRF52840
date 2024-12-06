@@ -19,6 +19,7 @@ int main()
     }
     else
     {
+        logPrintf("Jump to Bootloader\n");
         jump_boot();
     }
 
@@ -38,10 +39,10 @@ static void jump_app()
 
     uint32_t handler_address = *(volatile uint32_t*)(ADDR_APP_BEGIN + 4);
 
-    // __set_CONTROL(0x00000000);   // Set CONTROL to its reset value 0.
-    // __set_PRIMASK(0x00000000);   // Set PRIMASK to its reset value 0.
-    // __set_BASEPRI(0x00000000);   // Set BASEPRI to its reset value 0.
-    // __set_FAULTMASK(0x00000000); // Set FAULTMASK to its reset value 0.
+    __set_CONTROL(0x00000000);   // Set CONTROL to its reset value 0.
+    __set_PRIMASK(0x00000000);   // Set PRIMASK to its reset value 0.
+    __set_BASEPRI(0x00000000);   // Set BASEPRI to its reset value 0.
+    __set_FAULTMASK(0x00000000); // Set FAULTMASK to its reset value 0.
 
     __set_MSP(msp);
     reset_handler = (void*)handler_address;

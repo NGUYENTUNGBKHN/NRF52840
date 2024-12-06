@@ -1,4 +1,4 @@
-TARGET_NAME:=boot
+TARGET_NAME:=app
 BUILD_DIR:=_build
 MAKE_COMMON:=../Common
 
@@ -11,7 +11,7 @@ DRV_DIR:=$(ROOT_PROJ)/Driver
 
 
 $(BUILD_DIR)/$(TARGET_NAME).out: \
-	LINKER_SCRIPT := $(ROOT_PROJ)/boot.ld
+	LINKER_SCRIPT := $(ROOT_PROJ)/app.ld
 
 CPU=-mcpu=cortex-m4 -mthumb -mabi=aapcs
 FPU=-mfloat-abi=hard -mfpu=fpv4-sp-d16

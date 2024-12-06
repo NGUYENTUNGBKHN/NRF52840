@@ -28,6 +28,8 @@ extern "C"
 #define __OM    volatile        /* Only write */
 #define __IOM   volatile        /* Read wirte */
 
+
+/* UART REGISTER */
 typedef struct UartType_s
 {
     __OM  uint32_t TASKS_STARTRX;     /* Start UART receiver */
@@ -145,9 +147,57 @@ typedef struct UartType_s
 #define UART_CONFIG_STOP_ONE        (0 << UART_CONFIG_STOP_POS)
 #define UART_CONFIG_STOP_TWO        (1 << UART_CONFIG_STOP_POS)
 
+/* GPIO REGISTER */
+
+typedef struct GPIO_type_s
+{
+    __IM  uint32_t RESERVED[321];
+    __IOM uint32_t OUT;         
+    __IOM uint32_t OUTSET;
+    __IOM uint32_t OUTCLR;
+    __IM  uint32_t IN;
+    __IOM uint32_t DIR;
+    __IOM uint32_t DIRSET;
+    __IOM uint32_t DIRCLR;
+    __IOM uint32_t LATCH;
+    __IOM uint32_t DETECTMODE;
+    __IOM uint32_t RESERVED1[118];
+    __IOM uint32_t PIN_CNF[32];
+}Gpio_type_t,*Gpio_type_p;
+
+#define GPIO0_BASE_ADDRESS   0x50000000
+#define GPIO1_BASE_ADDRESS   0x50000300
+
+/* GPIO Configurate Register */
+#define GPIO_CNF_CONFIG_DIR_POS         0 
+#define GPIO_CNF_CONFIG_IN_POS          1
+#define GPIO_CNF_CONFIG_PULL_POS        2
+#define GPIO_CNF_CONFIG_DRIVE_POS       8
+#define GPIO_CNF_CONFIG_SENSE_POS       16
+
+#define GPIO_CNF_CONFIG_DIR_INPUT       (0 << GPIO_CNF_CONFIG_DIR_POS)
+#define GPIO_CNF_CONFIG_DIR_OUTPUT      (1 << GPIO_CNF_CONFIG_DIR_POS)
+#define GPIO_CNF_CONFIG_IN_CONNECT      (0 << GPIO_CNF_CONFIG_IN_POS)
+#define GPIO_CNF_CONFIG_IN_DISCONNECT   (1 << GPIO_CNF_CONFIG_IN_POS)
+#define GPIO_CNF_CONFIG_PULL_DIS        (0 << GPIO_CNF_CONFIG_PULL_POS)
+#define GPIO_CNF_CONFIG_PULL_DOWN       (1 << GPIO_CNF_CONFIG_PULL_POS)
+#define GPIO_CNF_CONFIG_PULL_UP         (3 << GPIO_CNF_CONFIG_PULL_POS)
+#define GPIO_CNF_CONFIG_DRIVE_S0S1      (0 << GPIO_CNF_CONFIG_DRIVE_POS)
+#define GPIO_CNF_CONFIG_DRIVE_H0S1      (1 << GPIO_CNF_CONFIG_DRIVE_POS)
+#define GPIO_CNF_CONFIG_DRIVE_S0H1      (2 << GPIO_CNF_CONFIG_DRIVE_POS)
+#define GPIO_CNF_CONFIG_DRIVE_H0H1      (3 << GPIO_CNF_CONFIG_DRIVE_POS)
+#define GPIO_CNF_CONFIG_DRIVE_D0S1      (4 << GPIO_CNF_CONFIG_DRIVE_POS)
+#define GPIO_CNF_CONFIG_DRIVE_D0H1      (5 << GPIO_CNF_CONFIG_DRIVE_POS)
+#define GPIO_CNF_CONFIG_DRIVE_S0D1      (6 << GPIO_CNF_CONFIG_DRIVE_POS)
+#define GPIO_CNF_CONFIG_DRIVE_H0D1      (7 << GPIO_CNF_CONFIG_DRIVE_POS)
+#define GPIO_CNF_CONFIG_SENSE_DIS       (0 << GPIO_CNF_CONFIG_SENSE_POS)
+#define GPIO_CNF_CONFIG_SENSE_HIGH      (2 << GPIO_CNF_CONFIG_SENSE_POS)
+#define GPIO_CNF_CONFIG_SENSE_LOW       (3 << GPIO_CNF_CONFIG_SENSE_POS)
 
 
 #define uart0 ((UartType_t*) UART_BASE_ADDRESS)     
+#define gpio0 ((Gpio_type_t*) GPIO0_BASE_ADDRESS)
+#define gpio1 ((Gpio_type_t*) GPIO1_BASE_ADDRESS)
 
 
 
