@@ -8,6 +8,7 @@ INC_COMMON:=../Inc_common
 BARE_CORE:=../bare_core
 MID_DIR:=$(ROOT_PROJ)/Middleware
 DRV_DIR:=$(ROOT_PROJ)/Driver
+OSKERNEL_DIR:=../osKernel
 
 
 $(BUILD_DIR)/$(TARGET_NAME).out: \
@@ -35,6 +36,7 @@ LDFLAGS+=-T$(LINKER_SCRIPT) -mthumb -mabi=aapcs
 
 SRC_FILES+=$(wildcard *.c)
 SRC_FILES+=$(wildcard $(MID_DIR)/log/*.c)
+# SRC_FILES+=$(wildcard $(OSKERNEL_DIR)/*.s)
 
 INC_FOLDERS=\
 	$(INC_COMMON)\
