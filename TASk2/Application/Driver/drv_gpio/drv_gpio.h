@@ -114,13 +114,25 @@ __STATIC_INLINE void drv_gpio_cfg_input(uint32_t pin_no, drv_gpio_pin_pull_t pul
                 DRV_GPIO_PIN_SENSE_DIS);
 }
 
+__STATIC_INLINE uint32_t drv_gpio_port_in_read(Gpio_type_t *p_reg)
+{
+    return p_reg->IN;
+}
 
+__STATIC_INLINE uint32_t drv_gpio_port_dir_read(Gpio_type_t *p_reg)
+{
+    return p_reg->DIR;
+}
+
+__STATIC_INLINE uint32_t drv_gpio_port_in_read(Gpio_type_t *p_reg)
+{
+    return p_reg->IN;
+}
 
 __STATIC_INLINE uint32_t drv_gpio_port_out_read(Gpio_type_t *p_reg)
 {
     return p_reg->OUT;
 }
-
 
 __STATIC_INLINE void drv_gpio_port_out_write(Gpio_type_t *p_reg, uint32_t value)
 {
@@ -136,6 +148,35 @@ __STATIC_INLINE void drv_gpio_port_out_clear(Gpio_type_t *p_reg, uint32_t clr_ma
 {
     p_reg->OUTCLR = clr_mask;
 }
+
+typedef void *config(drv_gpio_t gpio,
+                    drv_gpio_pin_dir_t pin_dir,
+                    drv_gpio_pin_input_t pin_input,
+                    drv_gpio_pin_pull_t pin_pull,
+                    drv_gpio_pin_drive_t pin_drive,
+                    drv_gpio_pin_sense_t pin_sense);
+
+typedef void *set_dir(drv_gpio_t gpio, uint32_t dir);
+
+typedef void *output(drv_gpio_t gpio, uint32_t value);
+
+typedef uint32_t *input(drv_gpio_t gpio);
+
+typedef struct drv_gpio_s
+{
+    uint32_t pin_no;
+    uint32_t pin_dir;
+    uint32_t pin_input;
+    uint32_t pin_pull;
+    uint32_t pin_drive;
+    uint32_t pin_sense;
+    config *gpio_config;
+    set_dir *gpio_set_dir;
+    output *gpio_output;
+    input *gpio_input;
+}drv_gpio_t, *drv_gpio_p;
+
+extern drv_gpio_t* drv_gpio_init(uint32_t pin_no);
 
 #ifdef __cplusplus
 }

@@ -36,7 +36,7 @@ LDFLAGS+=-T$(LINKER_SCRIPT) -mthumb -mabi=aapcs
 
 SRC_FILES+=$(wildcard *.c)
 SRC_FILES+=$(wildcard $(MID_DIR)/log/*.c)
-# SRC_FILES+=$(wildcard $(OSKERNEL_DIR)/*.s)
+SRC_FILES+=$(wildcard $(OSKERNEL_DIR)/*.s)
 
 INC_FOLDERS=\
 	$(INC_COMMON)\
