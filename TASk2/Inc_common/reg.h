@@ -18,17 +18,8 @@ extern "C"
 #endif
 
 /* CODE */
-#include <stdint.h>
+#include <core.h>
 #include <string.h>
-/* for Variable */
-#define __I     volatile const  /* Only read */
-#define __O     volatile        /* Only write */
-#define __IO    volatile        /* Read Write */
-/* FOr struct member */
-#define __IM    volatile const  /* Only read */
-#define __OM    volatile        /* Only write */
-#define __IOM   volatile        /* Read wirte */
-
 
 /* UART REGISTER */
 typedef struct UartType_s

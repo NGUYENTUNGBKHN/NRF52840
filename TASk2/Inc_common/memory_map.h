@@ -27,7 +27,7 @@ extern "C"
 #define ADDR_BOOT_END       0x000E0000
 
 #define ADDR_APP_SECTION    0x000E0000
-#define ADDR_APP_BEGIN      0x000E0028
+#define ADDR_APP_BEGIN      0x000E0000
 #define ADDR_APP_END        0x00000000
 
 #ifdef __cplusplus

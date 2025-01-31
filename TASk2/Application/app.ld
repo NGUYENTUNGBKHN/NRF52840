@@ -11,9 +11,9 @@ SECTIONS
 {
     .text :
     {
-        __my_test_start = .;
+        /* __my_test_start = .;
         KEEP(*(.APP_SECTION_HEADER))
-        __my_test_end = .;
+        __my_test_end = .; */
         KEEP(*(.isr_vector))
         *(.text)
         *(.text.*)

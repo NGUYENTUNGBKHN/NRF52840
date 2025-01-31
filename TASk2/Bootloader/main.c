@@ -65,6 +65,9 @@ static void jump_app()
     __set_MSP(msp);
     reset_handler = (void*)handler_address;
 
+    /* Change vector table */
+    SCB->VTOR = 0x000E0000;
+
     reset_handler();
 }
 

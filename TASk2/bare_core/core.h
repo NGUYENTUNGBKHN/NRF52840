@@ -54,6 +54,77 @@ extern "C"
   #define __PACKED_UNION                         union __attribute__((packed, aligned(1)))
 #endif
 /* End */
+/* for Variable */
+#define __I     volatile const  /* Only read */
+#define __O     volatile        /* Only write */
+#define __IO    volatile        /* Read Write */
+/* FOr struct member */
+#define __IM    volatile const  /* Only read */
+#define __OM    volatile        /* Only write */
+#define __IOM   volatile        /* Read wirte */
+
+
+
+/* System Control Register */
+
+typedef struct SCB_s
+{
+	__IM uint32_t CPUID;			/*!< Offset: 0x000 (R/ )  CPUID Base Register */
+	__IOM uint32_t ICSR;			/*!< Offset: 0x004 (R/W)  Interrupt Control and State Register */
+	__IOM uint32_t VTOR;			/*!< Offset: 0x008 (R/W)  Vector Table Offset Register */
+	__IOM uint32_t AIRCR;			/*!< Offset: 0x00C (R/W)  Application Interrupt and Reset Control Register */
+	__IOM uint32_t SCR;				/*!< Offset: 0x010 (R/W)  System Control Register */
+	__IOM uint32_t CCR;				/*!< Offset: 0x014 (R/W)  Configuration Control Register */
+	__IOM uint8_t SHP[12U]; 		/*!< Offset: 0x018 (R/W)  System Handlers Priority Registers (4-7, 8-11, 12-15) */
+	__IOM uint32_t SHCSR;			/*!< Offset: 0x024 (R/W)  System Handler Control and State Register */
+	__IOM uint32_t CFSR;			/*!< Offset: 0x028 (R/W)  Configurable Fault Status Register */
+	__IOM uint32_t HFSR;			/*!< Offset: 0x02C (R/W)  HardFault Status Register */
+	__IOM uint32_t DFSR;			/*!< Offset: 0x030 (R/W)  Debug Fault Status Register */
+	__IOM uint32_t MMFAR;			/*!< Offset: 0x034 (R/W)  MemManage Fault Address Register */
+	__IOM uint32_t BFAR;			/*!< Offset: 0x038 (R/W)  BusFault Address Register */
+	__IOM uint32_t AFSR;			/*!< Offset: 0x03C (R/W)  Auxiliary Fault Status Register */
+	__IM uint32_t PFR[2U];			/*!< Offset: 0x040 (R/ )  Processor Feature Register */
+	__IM uint32_t DFR;				/*!< Offset: 0x048 (R/ )  Debug Feature Register */
+	__IM uint32_t ADR;				/*!< Offset: 0x04C (R/ )  Auxiliary Feature Register */
+	__IM uint32_t MMFR[4U]; 		/*!< Offset: 0x050 (R/ )  Memory Model Feature Register */
+	__IM uint32_t ISAR[5U]; 		/*!< Offset: 0x060 (R/ )  Instruction Set Attributes Register */
+	uint32_t RESERVED0[5U];
+	__IOM uint32_t CPACR; 			/*!< Offset: 0x088 (R/W)  Coprocessor Access Control Register */
+} scb_t;
+
+#define SCR_BASE_ADDR 0xE000ED00UL
+
+#define SCB		((scb_t *)SCR_BASE_ADDR)
+/* End */
+
+// /**
+//   \brief   Set Interrupt Vector
+//   \details Sets an interrupt vector in SRAM based interrupt vector table.
+// 		   The interrupt number can be positive to specify a device specific interrupt,
+// 		   or negative to specify a processor exception.
+// 		   VTOR must been relocated to SRAM before.
+//   \param [in]   IRQn      Interrupt number
+//   \param [in]   vector    Address of interrupt handler function
+//  */
+// __STATIC_INLINE void __NVIC_SetVector(uint32_t IRQn, uint32_t vector)
+// {
+// 	uint32_t vectors = (uint32_t)SCB->VTOR;
+// 	(*(int *)(vectors + ((int32_t)IRQn + NVIC_USER_IRQ_OFFSET) * 4)) = vector;
+	
+// }
+
+// /**
+//   \brief   Get Interrupt Vector
+//   \details Reads an interrupt vector from interrupt vector table.
+// 		   The interrupt number can be positive to specify a device specific interrupt,
+// 		   or negative to specify a processor exception.
+//   \param [in]   IRQn      Interrupt number.
+//   \return                 Address of interrupt handler function
+//  */
+// __STATIC_INLINE uint32_t __NVIC_GetVector(uint32_t IRQn)
+// {
+// 	uint32_t vectors = (uint32_t)SCB->VTOR;
+// }
 
 __STATIC_INLINE uint32_t __get_MSP(void)
 {
