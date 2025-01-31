@@ -19,6 +19,7 @@ extern "C"
 
 /* CODE */
 #include <stdint.h>
+#include <string.h>
 /* for Variable */
 #define __I     volatile const  /* Only read */
 #define __O     volatile        /* Only write */

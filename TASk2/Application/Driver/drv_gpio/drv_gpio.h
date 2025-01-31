@@ -176,7 +176,11 @@ typedef struct drv_gpio_s
     input *gpio_input;
 }drv_gpio_t, *drv_gpio_p;
 
-extern drv_gpio_t* drv_gpio_init(uint32_t pin_no);
+extern void drv_gpio_init(drv_gpio_t* const self,
+                        config *gpio_config,
+                        set_dir *gpio_set_dir,
+                        output *gpio_output,
+                        input *gpio_input);
 
 #ifdef __cplusplus
 }
