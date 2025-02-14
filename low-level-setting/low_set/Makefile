@@ -9,7 +9,7 @@ CORE_DIR=$(ROOT_PROJ)/bare_core
 
 # This is the out file rule
 $(BUILD_DIR)/$(TARGET_NAME).out: \
-	LINKER_SCRIPT := $(ROOT_PROJ)/template.ld
+	LINKER_SCRIPT := $(ROOT_PROJ)/$(TARGET_NAME).ld
 
 # This is the Flags for the compiler
 CPU=-mcpu=cortex-m4 -mthumb -mabi=aapcs

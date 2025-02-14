@@ -97,6 +97,19 @@ typedef struct SCB_s
 #define SCB		((scb_t *)SCR_BASE_ADDR)
 /* End */
 
+/* FPU */
+
+/**
+ * 
+ */
+__STATIC_INLINE void __FPU_Enable(void)
+{
+	/* Enable CP10 and CP11 coprocessors */
+	SCB->CPACR |= (0xFUL << 20);
+	// __DSB();
+	// __ISB();
+}
+
 // /**
 //   \brief   Set Interrupt Vector
 //   \details Sets an interrupt vector in SRAM based interrupt vector table.
