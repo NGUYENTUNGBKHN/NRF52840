@@ -18,17 +18,6 @@ SECTIONS
         . = ALIGN(4);
     } > FLASH
 
-
-    .custom_ram_block 0x20000100(NOLOAD) :
-    {
-        KEEP(*(.custom_ram_block))
-    } > RAM
-
-    .custom_flash_block 0x08010000 :
-    {
-        KEEP(*(.custom_flash_block))
-    } > FLASH
-
     .text :
     {
         . = ALIGN(4);
@@ -46,7 +35,33 @@ SECTIONS
 
         . = ALIGN(4);
         _etext = .;
+        _sidata = _etext;
     } > FLASH
-    
+
+    .data :
+    {
+        _sdata = .;
+        *(.data)
+        _edata = .;
+    } > FLASH
+
+    .bss :
+    {
+        _sbss = .;
+        *(.bss)
+        _ebss = .;
+    } > FLASH
+
+    .custom_flash_block 0x00000300 :
+    {
+        KEEP(*(.custom_flash_block))
+    } > FLASH
+
+    .custom_ram_block 0x20000100 :
+    {
+        KEEP(*(.custom_ram_block))
+    } > RAM
+
+    _estack = ORIGIN(RAM) + LENGTH(RAM);
 }
 

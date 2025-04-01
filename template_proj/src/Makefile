@@ -9,7 +9,7 @@ CORE_DIR=$(ROOT_PROJ)/bare_core
 
 # This is the out file rule
 $(BUILD_DIR)/$(TARGET_NAME).out: \
-	LINKER_SCRIPT := $(ROOT_PROJ)/template.ld
+	LINKER_SCRIPT := $(ROOT_PROJ)/$(TARGET_NAME).ld
 
 # This is the Flags for the compiler
 CPU=-mcpu=cortex-m4 -mthumb -mabi=aapcs
@@ -32,14 +32,18 @@ LDFLAGS+=-T$(LINKER_SCRIPT) -mthumb -mabi=aapcs
 # 	$(ROOT_PROJ)/main.c\
 # 	$(ROOT_PROJ)/boot_startup.c\
 
-SRC_FILES+=$(wildcard *.c)
+SRC_EXCLUDE=\
+	template_startup.s\
+
+SRC_INCLUDE+=$(wildcard *.c)
+SRC_INCLUDE+=$(wildcard *.s)
 # SRC_FILES+=$(wildcard $(OSKERNEL_DIR)/*.s)
+SRC_FILES:=$(filter-out $(SRC_EXCLUDE), $(SRC_INCLUDE))
 
 INC_FOLDERS=\
 	$(CORE_DIR)\
 
 LIBS+=-lc -lm
-
 
 
 .PHONY:	default help

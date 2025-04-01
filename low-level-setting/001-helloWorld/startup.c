@@ -15,11 +15,11 @@ extern uint32_t _ebss;
 
 void Reset_Handler()
 {
-    uint32_t *start = (uint32_t*)&_sdata;
-    uint32_t *end = (uint32_t*)&_edata;
-    uint32_t *data = (uint32_t*)&_sidata;
-    uint32_t *bss_start = (uint32_t*)&_sbss;
-    uint32_t *bss_end = (uint32_t*)&_ebss;
+    uint32_t *start = &_sdata;
+    uint32_t *end = &_edata;
+    uint32_t *data = &_sidata;
+    uint32_t *bss_start = &_sbss;
+    uint32_t *bss_end = &_ebss;
 
     while (start < end)
     {

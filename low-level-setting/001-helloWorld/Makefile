@@ -1,17 +1,17 @@
 # This is a template makefile for building projects with nRF52840
-TARGET_NAME:=low_set
+TARGET_NAME:=hello
 BUILD_DIR:=_build
 MAKE_COMMON:=../Common
 
 # This is the root project directory and the core directory
-ROOT_PROJ:=./
+ROOT_PROJ:=.
 CORE_DIR=$(ROOT_PROJ)/../bare_core
 MIDDLEWARE_DIR=$(ROOT_PROJ)/Middleware
 INC_COMMON_DIR=$(ROOT_PROJ)/../Inc_common
 
 # This is the out file rule
 $(BUILD_DIR)/$(TARGET_NAME).out: \
-	LINKER_SCRIPT := $(ROOT_PROJ)/$(TARGET_NAME)_flash.ld
+	LINKER_SCRIPT := $(ROOT_PROJ)/$(TARGET_NAME).ld
 
 # This is the Flags for the compiler
 CPU=-mcpu=cortex-m4 -mthumb -mabi=aapcs
@@ -34,14 +34,21 @@ LDFLAGS+=-T$(LINKER_SCRIPT) -mthumb -mabi=aapcs
 # 	$(ROOT_PROJ)/main.c\
 # 	$(ROOT_PROJ)/boot_startup.c\
 
-SRC_FILES+=$(wildcard *.c)
+SRC_EXCLEDE=\
+	startup.c\
+
+SRC_FILE+=$(wildcard *.c)
+SRC_FILE+=$(wildcard *.s)
+
+SRC_FILES=$(filter-out $(SRC_EXCLEDE), $(SRC_FILE))
+
 # SRC_FILES+=$(wildcard $(OSKERNEL_DIR)/*.s)
-SRC_FILES+=$(wildcard $(MIDDLEWARE_DIR)/log/*.c)
+# SRC_FILES+=$(wildcard $(MIDDLEWARE_DIR)/log/*.c)
 
 INC_FOLDERS=\
 	$(CORE_DIR)\
-	$(MIDDLEWARE_DIR)/log\
-	$(INC_COMMON_DIR)\
+	# $(MIDDLEWARE_DIR)/log\
+	# $(INC_COMMON_DIR)\
 
 LIBS+=-lc -lm
 
