@@ -5,7 +5,9 @@ MAKE_COMMON:=../Common
 
 # This is the root project directory and the core directory
 ROOT_PROJ:=./
-CORE_DIR=$(ROOT_PROJ)/bare_core
+# Core directory for the project
+CORE_DIR:=$(ROOT_PROJ)/../Core/board
+CMSIS_DIR:=$(ROOT_PROJ)/../Core/cmsis/inc
 
 # This is the out file rule
 $(BUILD_DIR)/$(TARGET_NAME).out: \
@@ -34,6 +36,8 @@ LDFLAGS+=-T$(LINKER_SCRIPT) -mthumb -mabi=aapcs
 
 SRC_EXCLUDE=\
 	template_startup.s\
+	syscalls.c\
+	sysmem.c\
 
 SRC_INCLUDE+=$(wildcard *.c)
 SRC_INCLUDE+=$(wildcard *.s)
@@ -42,6 +46,7 @@ SRC_FILES:=$(filter-out $(SRC_EXCLUDE), $(SRC_INCLUDE))
 
 INC_FOLDERS=\
 	$(CORE_DIR)\
+	$(CMSIS_DIR)\
 
 LIBS+=-lc -lm
 

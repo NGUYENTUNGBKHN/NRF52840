@@ -2,3 +2,5 @@
 */*/CommanderScript
 doc
 .vscode
+**/_build
+**/CommanderScript
