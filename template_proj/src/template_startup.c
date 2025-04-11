@@ -15,24 +15,27 @@ extern uint32_t _ebss;
 
 void Reset_Handler()
 {
-    static uint32_t *start = (uint32_t*)&_sdata;
-    static uint32_t *end = (uint32_t*)&_edata;
-    static uint32_t *data = (uint32_t*)&_sidata;
-    static uint32_t *bss_start = (uint32_t*)&_sbss;
-    static uint32_t *bss_end = (uint32_t*)&_ebss;
+    volatile uint32_t *start = &_sdata;
+    volatile uint32_t *end = &_edata;
+    volatile uint32_t *data = &_sidata;
+    volatile uint32_t *bss_start = &_sbss;
+    volatile uint32_t *bss_end = &_ebss;
 
     while (start < end)
     {
         /* code */
         *start++ = *data++;
     }
-
+   
     /* setup bss data = 0 */
     while (bss_start < bss_end)
     {
         /* code */
         *bss_start++ = 0;
     }
+
+    /* Jump to __libc_init_array */
+    // __libc_init_array();
     
     main();
 }

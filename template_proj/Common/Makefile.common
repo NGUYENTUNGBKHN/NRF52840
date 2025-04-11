@@ -1,5 +1,6 @@
 MK:=mkdir
-RM:=rm -r
+RM:=rm -rf
+PRETTY := 0
 
 DEBUG ?= 0
 
@@ -14,14 +15,41 @@ OTHERS=$(filter-out clean, $(MAKECMDGOALS))
 ifeq (,$(OTHERS))
 .PHONY: clean
 clean:
-	$(NO_ECHO)echo clean target
-	$(RM) $(BUILD_DIR)
+	$(NO_ECHO)echo Clean $(BUILD_DIR)
+	$(NO_ECHO)$(RM) $(BUILD_DIR)
 else
-
+$(info Cannot make anything in parallel with "clean".)
+$(info Execute "$(MAKE) clean \
+  $(foreach goal, $(OTHER_GOALS),&& $(MAKE) $(goal))" instead.)
+$(error Cannot continue)
 endif # end OTHER
 
 else # not clean
+ifndef PROGRESS
+ifeq ($(PRETTY),1)
+    X     := @
+    EMPTY :=
+    SPACE := $(EMPTY) $(EMPTY)
+    TOTAL := $(subst $(SPACE),,$(filter $(X), \
+               $(shell "$(MAKE)" $(MAKECMDGOALS) --dry-run \
+                 --no-print-directory PROGRESS=$(X))))
 
+    5   := $(X)$(X)$(X)$(X)$(X)
+    25  := $(5)$(5)$(5)$(5)$(5)
+    100 := $(25)$(25)$(25)$(25)
+
+    C       :=
+    COUNTER  = $(eval C := $(C)$(100))$(C)
+    P       :=
+    count    = $(if $(filter $1%,$2),$(eval \
+                 P += 1)$(call count,$1,$(2:$1%=%)),$(eval \
+                 C := $2))
+    print    = [$(if $(word 99,$1),99,$(if $(word 10,$1),, )$(words $1))%]
+    PROGRESS = $(call count,$(TOTAL),$(COUNTER))$(call print,$(P)) $1
+else
+    PROGRESS = $1
+endif # ifeq ($(PRETTY),1)
+endif # ifndef PROGRESS
 # # # # # # # # TOOLCHAIN # # # # # # # # # #
 
 PLATFORM_SUFFIX := $(if $(filter Windows%,$(OS)),windows,posix)
@@ -105,6 +133,7 @@ INC_PATHS=$(call target_specifies, $($@_TGT), INC_PATHS)
 # $1 : include folder
 # 
 define get_inc_paths
+$(call ensure_exists_each, include folder, $(1))\
 $(foreach inc, $(1), -I$(inc))
 endef
 
@@ -121,13 +150,22 @@ $(eval INC_PATHS_$(strip $(1)) := \
     	$(INC_FOLDERS) $(call target_specific, INC_FOLDERS, $(1))))
 endef
 
-
+# This is the main target
+# To build executable file
 # $1 : target name
 define define_target
 $(eval OUTPUT_FILE:=$(BUILD_DIR)/$(strip $(1)))\
 $(eval $(1) : $(OUTPUT_FILE).out $(OUTPUT_FILE).hex $(OUTPUT_FILE).bin\
         ; @echo DONE $(1).)\
 $(call prepare_build, $(1), $(OUTPUT_FILE).out)
+endef
+
+# $1 : target name
+# $2 : library file name
+define define_library
+$(eval OUTPUT_FILE:=$(BUILD_DIR)/$(strip $(1)))\
+$(eval $(1) := $(2))\
+$(call prepare_build, $(1), $(1))
 endef
 
 
@@ -146,7 +184,7 @@ $(BUILD_DIR)/%/.: | $(BUILD_DIR)
 # $2 : flag
 # $3 : script
 define run
-$(info $(3) file : $(notdir $($@)))\
+$(info $(call PROGRESS, $(3) file : $(notdir $($@))))\
 $(NO_ECHO) $(1) -MD -MP -c -o $@ $(2) $($@) $(INC_PATHS)
 endef
 

@@ -1,8 +1,6 @@
 
 ENTRY(Reset_Handler)
 
-_Min_Heap_Size = 0x200; /* required amount of heap */
-_Min_Stack_Size = 0x400; /* required amount of stack */
 
 MEMORY
 {
@@ -44,33 +42,27 @@ SECTIONS
         . = ALIGN(4);
     } >FLASH
 
-    _sidata = LOADADDR(.data);
+    /* _sidata = LOADADDR(.data); */
+    _sidata = .;
 
-    .data : 
+    .data : AT(_sidata)
     {
+        . = ALIGN(4);
         _sdata = .;
         *(.data)
         *(.data.*)
+        . = ALIGN(4);
         _edata = .;
     } >RAM
 
     .bss :
     {
+        . = ALIGN(4);
         _sbss = .;
         *(.bss)
         *(.bss.*)
+        . = ALIGN(4);
         _ebss = .;
-    } >RAM
-
-    /* User_heap_stack section, used to check that there is enough "RAM" Ram  type memory left */
-    ._user_heap_stack :
-    {
-        . = ALIGN(8);
-        PROVIDE ( end = . );
-        PROVIDE ( _end = . );
-        . = . + _Min_Heap_Size;
-        . = . + _Min_Stack_Size;
-        . = ALIGN(8);
     } >RAM
 
     _estack = ORIGIN(RAM) + LENGTH(RAM);

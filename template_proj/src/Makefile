@@ -8,6 +8,7 @@ ROOT_PROJ:=./
 # Core directory for the project
 CORE_DIR:=$(ROOT_PROJ)/../Core/board
 CMSIS_DIR:=$(ROOT_PROJ)/../Core/cmsis/inc
+EXTERNAL_DIR:=$(ROOT_PROJ)/../external
 
 # This is the out file rule
 $(BUILD_DIR)/$(TARGET_NAME).out: \
@@ -41,14 +42,17 @@ SRC_EXCLUDE=\
 
 SRC_INCLUDE+=$(wildcard *.c)
 SRC_INCLUDE+=$(wildcard *.s)
+SRC_INCLUDE+=$(wildcard $(EXTERNAL_DIR)/segger_rtt/*.c)
 # SRC_FILES+=$(wildcard $(OSKERNEL_DIR)/*.s)
 SRC_FILES:=$(filter-out $(SRC_EXCLUDE), $(SRC_INCLUDE))
 
 INC_FOLDERS=\
 	$(CORE_DIR)\
 	$(CMSIS_DIR)\
+	$(EXTERNAL_DIR)\
 
-LIBS+=-lc -lm
+LIBS+=
+# LIBS+=-lc -lm
 
 
 .PHONY:	default help
