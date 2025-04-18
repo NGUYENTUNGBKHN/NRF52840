@@ -11,6 +11,7 @@ CMSIS_DIR:=$(ROOT_PROJ)/../Core/cmsis/inc
 EXTERNAL_DIR:=$(ROOT_PROJ)/../External
 MIDDLER_DIR:=$(ROOT_PROJ)/../Middleware
 WORKSPACE_DIR:=$(ROOT_PROJ)/../
+DRIVER_DIR:=$(ROOT_PROJ)/../Driver
 
 # This is the out file rule
 $(BUILD_DIR)/$(TARGET_NAME).out: \
@@ -45,6 +46,7 @@ SRC_INCLUDE+=$(wildcard *.s)
 SRC_INCLUDE+=$(wildcard $(EXTERNAL_DIR)/segger_rtt/*.c)
 SRC_INCLUDE+=$(wildcard $(MIDDLER_DIR)/Trace/*.c)
 SRC_INCLUDE+=$(wildcard $(MIDDLER_DIR)/Log/*.c)
+SRC_INCLUDE+=$(wildcard $(DRIVER_DIR)/Uart/*.c)
 # SRC_FILES+=$(wildcard $(OSKERNEL_DIR)/*.s)
 SRC_FILES:=$(filter-out $(SRC_EXCLUDE), $(SRC_INCLUDE))
 
@@ -56,7 +58,9 @@ INC_FOLDERS=\
 	$(WORKSPACE_DIR)\
 	$(MIDDLER_DIR)/Log\
 	$(MIDDLER_DIR)\
-
+	$(DRIVER_DIR)\
+	$(DRIVER_DIR)/Uart\
+	
 LIBS+=
 # LIBS+=-lc -lm
 

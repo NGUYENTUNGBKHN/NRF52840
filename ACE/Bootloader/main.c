@@ -9,17 +9,18 @@ int main()
     ace_trace_init();
     ace_trace_log("ACE Bootloader\n");
     logPrintf("ACE Bootloader\n");
-
+    
     if (1)
     {
         ace_trace_log("Jump to Application\n");
         logPrintf("Jump to Application\n");
-        jump_app();
+        //jump_app();
     }
     else
     {
         ace_trace_log("Jump to Bootloader\n");
-        jump_boot();
+        logPrintf("Jump to Bootloader\n");
+        //jump_boot();
     }
 
     while (1)

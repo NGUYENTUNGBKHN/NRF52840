@@ -65,6 +65,16 @@ SECTIONS
         _ebss = .;
     } >RAM
 
+    .ram_code :
+    {
+        . = ALIGN(4);
+        _sram_code = .;
+        *(.ram_code)
+        *(.ram_code.*)
+        . = ALIGN(4);
+        _eram_code = .;
+    } > RAM
+
     _estack = ORIGIN(RAM) + LENGTH(RAM);
 }
 
