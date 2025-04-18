@@ -169,10 +169,14 @@ $(call prepare_build, $(1), $(1))
 endef
 
 
-.PHONY: $(TARGET_NAME) all
+.PHONY: $(TARGET_NAME) all re
 
 all: $(TARGET_NAME)
 
+clean:
+	$(NO_ECHO)$(RM) $(BUILD_DIR)
+
+re: clean $(TARGET_NAME)
 
 $(BUILD_DIR):
 	$(MK) $@
@@ -208,7 +212,7 @@ endef
 	$(NO_ECHO)$(OBJCOPY) -O binary $< $@
 
 %.hex: %.out
-	$(info Preparing: $@)
+	$(info Preparing: $@)	
 	$(NO_ECHO)$(OBJCOPY) -O ihex $< $@
 
 

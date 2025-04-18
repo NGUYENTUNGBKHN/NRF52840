@@ -13,13 +13,14 @@
 #include <stdio.h>
 #include <stdarg.h>
 
-
+#define RAM_TRACE __attribute__((section(".ram_code")))
 
 extern int SEGGER_RTT_vprintf(unsigned BufferIndex, const char * sFormat, va_list * pParamList);
 
+RAM_TRACE
 static uint8_t ace_trace_is_init = 1;
 
-__attribute__((section(".ram_code")))
+RAM_TRACE
 void ace_trace_init(void)
 {
     SEGGER_RTT_Init();
@@ -27,6 +28,7 @@ void ace_trace_init(void)
     ace_trace_is_init = 1;
 }
 
+RAM_TRACE
 int ace_trace_log(const char *format, ...)
 {
     // if (ace_trace_is_init == 0)

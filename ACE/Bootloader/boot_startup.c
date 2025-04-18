@@ -13,6 +13,11 @@ extern uint32_t _edata;
 extern uint32_t _sbss;
 extern uint32_t _ebss;
 
+/*TRACE address*/
+extern uint32_t _sram_code;
+extern uint32_t _eram_code; 
+extern uint32_t _ramcode_load_start;
+
 void Reset_Handler()
 {
     volatile uint32_t *start = &_sdata;
@@ -32,6 +37,15 @@ void Reset_Handler()
     {
         /* code */
         *bss_start++ = 0;
+    }
+
+    volatile uint32_t *trace_start = &_sram_code;
+    volatile uint32_t *trace_end = &_eram_code; 
+    volatile uint32_t *trace_data = &_ramcode_load_start;
+    while (trace_start < trace_end)
+    {
+        /* code */
+        *trace_start++ = *trace_data++;
     }
 
     /* Jump to __libc_init_array */

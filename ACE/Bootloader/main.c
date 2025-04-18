@@ -2,6 +2,18 @@
 static void jump_boot();
 static void jump_app();
 
+uint8_t tung[2] = {0x01, 0x02};
+
+void delay(uint32_t count)
+{
+    volatile uint32_t i = 0;
+    for (i = 0; i < count; i++)
+    {
+        __asm("nop");
+    }
+}
+
+
 int main()
 {
     volatile static uint32_t count = 0;
@@ -10,23 +22,27 @@ int main()
     ace_trace_log("ACE Bootloader\n");
     logPrintf("ACE Bootloader\n");
     
+    tung[0] = 0x06;
+
     if (1)
     {
         ace_trace_log("Jump to Application\n");
         logPrintf("Jump to Application\n");
-        //jump_app();
+        jump_app();
     }
     else
     {
         ace_trace_log("Jump to Bootloader\n");
         logPrintf("Jump to Bootloader\n");
-        //jump_boot();
+        jump_boot();
     }
 
     while (1)
     {
         /* code */
-
+        logPrintf("Jump to Bootloader\n");
+        ace_trace_log("Jump to Bootloader\n");
+        delay(1000000);
     }
     
     return 0;

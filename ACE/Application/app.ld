@@ -1,9 +1,11 @@
 
 ENTRY(Reset_Handler)
 
+_estack = ORIGIN(RAM) + LENGTH(RAM);
 
 MEMORY
 {
+    FLASH_TRACE(rx) : ORIGIN = 0xA0000, LENGTH = 0x3FFFF
     FLASH(rx) : ORIGIN = 0x000E0000, LENGTH = 0x1E000
     RAM (rwx) : ORIGIN = 0x20020000, LENGTH = 0x20000 
 }
@@ -43,9 +45,9 @@ SECTIONS
     } >FLASH
 
     /* _sidata = LOADADDR(.data); */
-    _sidata = .;
+    _sidata = LOADADDR(.data); /* load address of .data section */
 
-    .data : AT(_sidata)
+    .data : 
     {
         . = ALIGN(4);
         _sdata = .;
@@ -53,7 +55,7 @@ SECTIONS
         *(.data.*)
         . = ALIGN(4);
         _edata = .;
-    } >RAM
+    } >RAM AT >FLASH
 
     .bss :
     {
@@ -63,9 +65,26 @@ SECTIONS
         *(.bss.*)
         . = ALIGN(4);
         _ebss = .;
-    } >RAM
+    } >RAM 
 
-    _estack = ORIGIN(RAM) + LENGTH(RAM);
+    .ram_code :
+    {
+        _ramcode_load_start = LOADADDR(.ram_code);
+        . = ALIGN(4);
+        _sram_code = .;
+        *(.ram_code)
+        *(.ram_code.*)
+        . = ALIGN(4);
+        _eram_code = .;
+    } > RAM AT> FLASH_TRACE
+    /* Remove information from the compiler libraries */
+    /DISCARD/ :
+    {
+        /* libc.a ( * )
+        libm.a ( * )
+        libgcc.a ( * ) */
+    }
+
 }
 
 

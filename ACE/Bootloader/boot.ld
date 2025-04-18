@@ -1,15 +1,24 @@
+/**
+    * @file boot.ld
+    * @brief Linker script for the bootloader.
+    * @version 0.1
+    * @date 2023-10-01
+    **/
 
 ENTRY(Reset_Handler)
 
+_estack = ORIGIN(RAM) + LENGTH(RAM);
 
 MEMORY
 {
-    FLASH(rx) : ORIGIN = 0x00, LENGTH = 0xE0000
+    FLASH(rx) : ORIGIN = 0x00, LENGTH = 0x9FFFF
+    FLASH_TRACE(rx) : ORIGIN = 0xA0000, LENGTH = 0x3FFFF
     RAM (rwx) : ORIGIN = 0x20000000, LENGTH = 0x20000 
 }
 
 SECTIONS
 {
+    /* ==== FLASH ===*/
     .isr_vector :
     {
         . = ALIGN(4);
@@ -42,10 +51,14 @@ SECTIONS
         . = ALIGN(4);
     } >FLASH
 
-    /* _sidata = LOADADDR(.data); */
-    _sidata = .;
+    /* _sidata = .; */
+    _sidata = LOADADDR(.data); /* load address of .data section */
 
-    .data : AT(_sidata)
+    /* _ramfunc_load_start = LOADADDR(.ram_code); load address of .text section */
+
+
+    /* ==== RAM ===*/
+    .data : /*AT(_sidata)*/
     {
         . = ALIGN(4);
         _sdata = .;
@@ -53,7 +66,7 @@ SECTIONS
         *(.data.*)
         . = ALIGN(4);
         _edata = .;
-    } >RAM
+    } >RAM AT>FLASH
 
     .bss :
     {
@@ -67,15 +80,21 @@ SECTIONS
 
     .ram_code :
     {
+        _ramcode_load_start = LOADADDR(.ram_code);
         . = ALIGN(4);
         _sram_code = .;
         *(.ram_code)
         *(.ram_code.*)
         . = ALIGN(4);
         _eram_code = .;
-    } > RAM
-
-    _estack = ORIGIN(RAM) + LENGTH(RAM);
+    } > RAM AT> FLASH_TRACE
+    /* Remove information from the compiler libraries */
+    /DISCARD/ :
+    {
+        /* libc.a ( * )
+        libm.a ( * )
+        libgcc.a ( * ) */
+    }
 }
 
 
