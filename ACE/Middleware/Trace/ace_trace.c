@@ -44,3 +44,4 @@ int ace_trace_log(const char *format, ...)
     va_end(ParamList);
     return r;
 }
+
