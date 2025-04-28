@@ -13,34 +13,29 @@ void delay(uint32_t count)
     }
 }
 
-
 int main()
 {
-    volatile static uint32_t count = 0;
-    logInit();
     ace_trace_init();
     ace_trace_log("ACE Bootloader\n");
-    logPrintf("ACE Bootloader\n");
+    drv_clock_init(0);
+    drv_clock_enable();
     
     tung[0] = 0x06;
 
-    if (1)
+    if (0)
     {
         ace_trace_log("Jump to Application\n");
-        logPrintf("Jump to Application\n");
         jump_app();
     }
     else
     {
         ace_trace_log("Jump to Bootloader\n");
-        logPrintf("Jump to Bootloader\n");
         jump_boot();
     }
 
     while (1)
     {
         /* code */
-        logPrintf("Jump to Bootloader\n");
         ace_trace_log("Jump to Bootloader\n");
         delay(1000000);
     }
@@ -72,5 +67,5 @@ static void jump_app()
 
 static void jump_boot()
 {
-    // bootloader();
+    bootloader();
 }

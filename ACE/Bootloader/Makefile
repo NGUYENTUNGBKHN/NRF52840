@@ -12,6 +12,7 @@ EXTERNAL_DIR:=$(ROOT_PROJ)/../External
 MIDDLER_DIR:=$(ROOT_PROJ)/../Middleware
 WORKSPACE_DIR:=$(ROOT_PROJ)/../
 DRIVER_DIR:=$(ROOT_PROJ)/../Driver
+HAL_DIR:=$(ROOT_PROJ)/../Driver/Hal
 
 # This is the out file rule
 $(BUILD_DIR)/$(TARGET_NAME).out: \
@@ -44,9 +45,10 @@ SRC_EXCLUDE=\
 SRC_INCLUDE+=$(wildcard *.c)
 SRC_INCLUDE+=$(wildcard *.s)
 SRC_INCLUDE+=$(wildcard $(EXTERNAL_DIR)/segger_rtt/*.c)
-SRC_INCLUDE+=$(wildcard $(MIDDLER_DIR)/Trace/*.c)
+SRC_INCLUDE+=$(wildcard $(EXTERNAL_DIR)/Trace/*.c)
 SRC_INCLUDE+=$(wildcard $(MIDDLER_DIR)/Log/*.c)
 SRC_INCLUDE+=$(wildcard $(DRIVER_DIR)/Uart/*.c)
+SRC_INCLUDE+=$(wildcard $(DRIVER_DIR)/Clock/*.c)
 # SRC_FILES+=$(wildcard $(OSKERNEL_DIR)/*.s)
 SRC_FILES:=$(filter-out $(SRC_EXCLUDE), $(SRC_INCLUDE))
 
@@ -60,6 +62,8 @@ INC_FOLDERS=\
 	$(MIDDLER_DIR)\
 	$(DRIVER_DIR)\
 	$(DRIVER_DIR)/Uart\
+	$(DRIVER_DIR)/Clock\
+	$(HAL_DIR)\
 
 LIBS+=
 # LIBS+=-lc -lm

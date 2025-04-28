@@ -20,7 +20,7 @@
 #define RTS_PIN_NUMBER 5
 #define PORT0 0
 
-DRV_STA_t drv_uart_init(drv_uart_t* drv)
+drv_sta_t drv_uart_init(drv_uart_t* drv)
 {
     if (drv == NULL)
     {
@@ -39,7 +39,7 @@ DRV_STA_t drv_uart_init(drv_uart_t* drv)
     return DRV_STA_OK;
 }
 
-DRV_STA_t drv_uart_deinit(drv_uart_t* drv)
+drv_sta_t drv_uart_deinit(drv_uart_t* drv)
 {
     if (drv == NULL)
     {
@@ -49,7 +49,7 @@ DRV_STA_t drv_uart_deinit(drv_uart_t* drv)
     return DRV_STA_OK;
 }
 
-DRV_STA_t drv_uart_config(drv_uart_t* drv)
+drv_sta_t drv_uart_config(drv_uart_t* drv)
 {
     // if (NULL != drv)
     // {
@@ -60,7 +60,7 @@ DRV_STA_t drv_uart_config(drv_uart_t* drv)
     return DRV_STA_OK;
 }
 
-DRV_STA_t drv_uart_send_byte(drv_uart_t* drv, uint8_t data)
+drv_sta_t drv_uart_send_byte(drv_uart_t* drv, uint8_t data)
 {
     if (NULL == drv)
     {
@@ -75,7 +75,7 @@ DRV_STA_t drv_uart_send_byte(drv_uart_t* drv, uint8_t data)
     return DRV_STA_OK;
 }
 
-DRV_STA_t drv_uart_send(drv_uart_t* drv, uint8_t* data, uint32_t len)
+drv_sta_t drv_uart_send(drv_uart_t* drv, uint8_t* data, uint32_t len)
 {
     if (NULL == drv || NULL == data || len == 0)
     {

@@ -132,11 +132,11 @@ typedef struct DRV_UART_s
 }
 
 
-DRV_STA_t drv_uart_init(drv_uart_t* drv);
-DRV_STA_t drv_uart_deinit(drv_uart_t* drv);
-DRV_STA_t drv_uart_config(drv_uart_t* drv);
-DRV_STA_t drv_uart_send(drv_uart_t* drv, uint8_t* data, uint32_t len);
-DRV_STA_t drv_uart_send_byte(drv_uart_t* drv, uint8_t data);
+drv_sta_t drv_uart_init(drv_uart_t* drv);
+drv_sta_t drv_uart_deinit(drv_uart_t* drv);
+drv_sta_t drv_uart_config(drv_uart_t* drv);
+drv_sta_t drv_uart_send(drv_uart_t* drv, uint8_t* data, uint32_t len);
+drv_sta_t drv_uart_send_byte(drv_uart_t* drv, uint8_t data);
 
 #ifdef __cplusplus
 }
