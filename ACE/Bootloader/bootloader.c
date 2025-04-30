@@ -12,12 +12,25 @@
 
 #include "bootloader.h"
 
+void delay(uint32_t count)
+{
+    volatile uint32_t i = 0;
+    for (i = 0; i < count; i++)
+    {
+        __asm("nop");
+    }
+}
+
+
 void bootloader()
 {
     ace_trace_log("Bootloader start\n");
     while (1)
     {
         /* code */
-        
+        // Use directly __WFE and __SEV macros since the SoftDevice is not available.
+
+        // Wait for event.
+        // __WFE();
     }
 }

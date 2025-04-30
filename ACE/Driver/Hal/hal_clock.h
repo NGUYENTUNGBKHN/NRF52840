@@ -25,6 +25,7 @@ typedef enum
 {
     HAL_CLOCK_LFCLK_RC = CLOCK_LFCLKSTAT_SRC_RC, /*!< LFCLK RC */
     HAL_CLOCK_LFCLK_XTAL = CLOCK_LFCLKSTAT_SRC_Xtal, /*!< LFCLK XTAL */
+    HAL_CLOCK_LFCLK_SYNTH = CLOCK_LFCLKSTAT_SRC_Synth, /*!< LFCLK Synth */
 } hal_clock_lfclk_t;
 
 /**
@@ -118,12 +119,12 @@ __STATIC_INLINE void hal_clock_interrupt_disable(uint32_t int_mask)
 
 __STATIC_INLINE bool hal_clock_interrupt_enable_check(hal_clock_int_mask_t int_mask)
 {
-    return ((uint32_t)NRF_CLOCK->INTENCLR & int_mask);
+    return (bool)(NRF_CLOCK->INTENCLR & int_mask);
 }
 
 __STATIC_INLINE uint32_t hal_clock_task_address_get(hal_clock_task_t task)
 {
-    return ((uint32_t)NRF_CLOCK + task);
+    return (bool)(NRF_CLOCK + task);
 }
 
 __STATIC_INLINE void hal_clock_task_trigger(hal_clock_task_t task)
@@ -141,9 +142,9 @@ __STATIC_INLINE void hal_clock_event_clear(hal_clock_event_t event)
     *(volatile uint32_t *)((uint8_t *)NRF_CLOCK + event) = 0;
 }
 
-__STATIC_INLINE uint32_t hal_clock_event_check(hal_clock_event_t event)
+__STATIC_INLINE bool hal_clock_event_check(hal_clock_event_t event)
 {
-    return ((uint32_t)NRF_CLOCK->EVENTS_HFCLKSTARTED & event);
+    return (bool)*(volatile uint32_t*)((uint8_t*)NRF_CLOCK + event);
 }
 
 __STATIC_INLINE void hal_clock_lf_src_set(hal_clock_lfclk_t source)

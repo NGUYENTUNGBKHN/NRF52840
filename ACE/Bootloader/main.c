@@ -4,12 +4,20 @@ static void jump_app();
 
 uint8_t tung[2] = {0x01, 0x02};
 
-void delay(uint32_t count)
+
+
+void ace_clock_event_handler(drv_clock_evt_type_t event)
 {
-    volatile uint32_t i = 0;
-    for (i = 0; i < count; i++)
-    {
-        __asm("nop");
+    switch (event)
+    {    
+    case DRV_CLOCK_EVT_HFCLK_STARTED:
+        ace_trace_log("HFCLK started\n");
+        break;
+    case DRV_CLOCK_EVT_LFCLK_STARTED:
+        ace_trace_log("LFCLK started\n");       
+        break;
+    default:
+        break;
     }
 }
 
@@ -17,8 +25,9 @@ int main()
 {
     ace_trace_init();
     ace_trace_log("ACE Bootloader\n");
-    drv_clock_init(0);
+    drv_clock_init(&ace_clock_event_handler);
     drv_clock_enable();
+    drv_clock_lfclk_start();
     
     tung[0] = 0x06;
 
@@ -36,8 +45,8 @@ int main()
     while (1)
     {
         /* code */
-        ace_trace_log("Jump to Bootloader\n");
-        delay(1000000);
+        // ace_trace_log("Jump to Bootloader\n");
+        // delay(1000000);
     }
     
     return 0;

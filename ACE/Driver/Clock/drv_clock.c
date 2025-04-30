@@ -11,6 +11,7 @@
 ******************************************************************************/
 
 #include "drv_clock.h"
+#include "drv_power_clock.h"
 #include "Trace/ace_trace.h"
 
 typedef struct DRV_CLOCK_CB_S
@@ -42,10 +43,53 @@ drv_sta_t drv_clock_enable()
     {
         return DRV_STA_NG;
     }
-    // NRFX_IRQ_NUMBER_GET(NRF_CLOCK); // Get IRQ number for CLOCK peripheral
-    // NVIC_EnableIRQ
-    ace_trace_log("drv_clock_enable %x \n",NRFX_IRQ_NUMBER_GET(NRF_CLOCK));
+
+    nrfx_power_clock_irq_init();
+    hal_clock_lf_src_set(HAL_CLOCK_LFCLK_SYNTH);
+
     return DRV_STA_OK;  
 }
 
+void drv_clock_lfclk_start(void)
+{
+    // NRFX_ASSERT(m_clock_cb.module_initialized);
+    hal_clock_event_clear(HAL_CLOCK_EVENT_LFCLKSTARTED);
+    hal_clock_interrupt_enable(HAL_CLOCK_INT_LFCLKSTARTED_MASK);
 
+    hal_clock_task_trigger(HAL_CLOCK_TASK_LFCLKSTART);
+    ace_trace_log("%s\n", __func__);
+}
+
+drv_sta_t drv_clock_irq_handler()
+{
+    if (m_clock_cb.event_handler == NULL)
+    {
+        return DRV_STA_NG;
+    }
+    /* High frequency clock started event */
+    if (hal_clock_event_check(HAL_CLOCK_EVENT_HFCLKSTARTED))
+    {
+        m_clock_cb.event_handler(DRV_CLOCK_EVT_HFCLK_STARTED);
+        hal_clock_event_clear(HAL_CLOCK_EVENT_HFCLKSTARTED);
+    }
+
+    if (hal_clock_event_check(HAL_CLOCK_EVENT_LFCLKSTARTED))
+    {
+        m_clock_cb.event_handler(DRV_CLOCK_EVT_LFCLK_STARTED);
+        hal_clock_event_clear(HAL_CLOCK_EVENT_LFCLKSTARTED);
+    }
+
+    if (hal_clock_event_check(HAL_CLOCK_EVENT_CTTO))
+    {
+        m_clock_cb.event_handler(DRV_CLOCK_EVT_CTTO);
+        hal_clock_event_clear(HAL_CLOCK_EVENT_CTTO);
+    }
+
+    if (hal_clock_event_check(HAL_CLOCK_EVENT_DONE))
+    {
+        m_clock_cb.event_handler(DRV_CLOCK_EVT_CAL_DONE);
+        hal_clock_event_clear(HAL_CLOCK_EVENT_DONE);
+    }
+
+    return DRV_STA_OK;
+}

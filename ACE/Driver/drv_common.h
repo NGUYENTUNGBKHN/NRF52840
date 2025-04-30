@@ -17,9 +17,53 @@ extern "C"
 {
 #endif
 
-#define NRFX_PERIPHERAL_ID_GET(base_addr)  (uint8_t)((uint32_t)(base_addr) >> 12)
+#include "stdbool.h"
+#include "nrf52840.h"
 
-#define NRFX_IRQ_NUMBER_GET(base_addr)  NRFX_PERIPHERAL_ID_GET(base_addr)
+#define DRV_PERIPHERAL_ID_GET(base_addr)  (uint8_t)((uint32_t)(base_addr) >> 12)
+
+#define DRV_IRQ_NUMBER_GET(base_addr)  DRV_PERIPHERAL_ID_GET(base_addr)
+
+/**
+ * @brief Macro for setting the priority of a specific IRQ.
+ *
+ * @param irq_number  IRQ number.
+ * @param priority    Priority to set.
+ */
+#define DRV_IRQ_PRIORITY_SET(irq_number, priority) \
+    _DRV_IRQ_PRIORITY_SET(irq_number, priority)
+static inline void _DRV_IRQ_PRIORITY_SET(IRQn_Type irq_number,
+                                          uint8_t   priority)
+{
+    // ASSERT(INTERRUPT_PRIORITY_IS_VALID(priority));
+    NVIC_SetPriority(irq_number, priority);
+}
+
+/**
+ * @brief Macro for enabling a specific IRQ.
+ *
+ * @param irq_number  IRQ number.
+ */
+#define DRV_IRQ_ENABLE(irq_number)  _DRV_IRQ_ENABLE(irq_number)
+static inline void _DRV_IRQ_ENABLE(IRQn_Type irq_number)
+{
+    NVIC_EnableIRQ(irq_number);
+}
+
+/**
+ * @brief Macro for checking if a specific IRQ is enabled.
+ *
+ * @param irq_number  IRQ number.
+ *
+ * @retval true  If the IRQ is enabled.
+ * @retval false Otherwise.
+ */
+#define DRV_IRQ_IS_ENABLED(irq_number)  _DRV_IRQ_IS_ENABLED(irq_number)
+static inline bool _DRV_IRQ_IS_ENABLED(IRQn_Type irq_number)
+{
+    return 0 != (NVIC->ISER[irq_number / 32] & (1UL << (irq_number % 32)));
+}
+
 
 /* CODE */
 #include "hal_clock.h"

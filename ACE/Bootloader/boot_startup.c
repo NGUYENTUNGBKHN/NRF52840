@@ -18,6 +18,8 @@ extern uint32_t _sram_code;
 extern uint32_t _eram_code; 
 extern uint32_t _ramcode_load_start;
 
+// extern void POWER_CLOCK_IRQHandler(void);
+
 void Reset_Handler()
 {
     volatile uint32_t *start = &_sdata;
@@ -64,26 +66,40 @@ void default_handler(void)
     
 }
 
+void empty_handler(void)
+{
+    /* code */
+}
+
 void NMI_Handler(void) __attribute((weak, alias("default_handler")));
 void HardFault_Handler(void) __attribute((weak, alias("default_handler")));
 void MemManage_Handler(void) __attribute((weak, alias("default_handler")));
 void BusFault_Handler(void) __attribute((weak, alias("default_handler")));
 void UsageFault_Handler(void) __attribute((weak, alias("default_handler")));
-void SVC_Handler(void) __attribute((weak, alias("default_handler")));
+void SVC_Handler(void) __attribute((weak, alias("empty_handler")));
+void PendSV_Handler(void) __attribute((weak, alias("empty_handler")));
+void SysTick_Handler(void) __attribute((weak, alias("empty_handler")));
+void POWER_CLOCK_IRQHandler(void) __attribute((weak, alias("empty_handler")));
 
 __attribute((section(".isr_vector")))
 uint32_t *_isr_vector[] = {
     (uint32_t*) &_estack,               /* top stack pointer */
     (uint32_t*) Reset_Handler,          /* Reset handler  */
-    (uint32_t*) NMI_Handler,
-    (uint32_t*) HardFault_Handler,
-    (uint32_t*) MemManage_Handler,
-    (uint32_t*) BusFault_Handler,
-    (uint32_t*) UsageFault_Handler,
+    (uint32_t*) NMI_Handler,            /* NMI handler */
+    (uint32_t*) HardFault_Handler,      /* Hard fault handler */
+    (uint32_t*) MemManage_Handler,      /* MPU fault handler */
+    (uint32_t*) BusFault_Handler,       /* Bus fault handler */
+    (uint32_t*) UsageFault_Handler,     /* Usage fault handler */
     0,
     0,
     0,
     0,
-    (uint32_t*) SVC_Handler,
+    (uint32_t*) SVC_Handler,            /* SVCall handler */
+    0,
+    0,
+    (uint32_t*) PendSV_Handler,            /* PendSV handler */
+    (uint32_t*) SysTick_Handler,          /* SysTick handler */
+    /* External interrupts */
+    (uint32_t*) POWER_CLOCK_IRQHandler,
 };
 
