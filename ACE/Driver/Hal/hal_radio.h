@@ -72,6 +72,10 @@ typedef enum
     HAL_RADIO_EVENT_PHYEND      = offsetof(NRF_RADIO_Type, EVENTS_PHYEND),      /*!< PHYEND event */
 }hal_radio_event_t;
 
+/**
+ * @brief   Radio interrupt.
+ * @details Radio interrupt to indicate that a task has been started or stopped.
+ */
 typedef enum
 {
     HAL_RADIO_INT_READY_MASK        = RADIO_INTENSET_READY_Msk,         /*!< READY event */
@@ -99,6 +103,10 @@ typedef enum
     HAL_RADIO_INT_PHYEND_MASK       = RADIO_INTENSET_PHYEND_Msk,        /*!< PHYEND event */
 }hal_radio_interrupt_mask_t;
 
+/**
+ * @brief   Radio shortcut.
+ * @details Radio shortcut to indicate that a task has been started or stopped.
+ */
 typedef enum
 {
     HAL_RADIO_SHORT_READY_START_MASK        = RADIO_SHORTS_READY_START_Msk,         /*!< READY event to START task */
@@ -122,6 +130,10 @@ typedef enum
     HAL_RADIO_SHORT_PHYEND_START_MASK       = RADIO_SHORTS_PHYEND_START_Msk,        /*!< PHYEND event to START task */
 }hal_radio_shortcut_mask_t;
 
+/**
+ * @brief   Radio state.   
+ * @details Radio state to indicate that a task has been started or stopped.
+ */
 typedef enum
 {
     HAL_RADIO_STATE_DISABLED    = RADIO_STATE_STATE_Disabled,   /*!< Radio is disabled */
@@ -218,7 +230,129 @@ __STATIC_INLINE bool hal_radio_interrupt_enable_check(hal_radio_interrupt_mask_t
     return (bool)(NRF_RADIO->INTENSET & int_mask);
 }
 
+/* Get Radio status */
+__STATIC_INLINE bool hal_radio_crc_status_check()
+{
+    return ((NRF_RADIO->CRCSTATUS & RADIO_CRCSTATUS_CRCSTATUS_Msk) >> RADIO_CRCSTATUS_CRCSTATUS_Pos)
+           == RADIO_CRCSTATUS_CRCSTATUS_CRCOk;
+}
 
+__STATIC_INLINE uint8_t hal_radio_rxmatch_get(void)
+{
+    return (uint8_t)(NRF_RADIO->RXMATCH );
+}
+
+__STATIC_INLINE uint32_t hal_radio_rxcrc_get(void)
+{
+    return (NRF_RADIO->RXCRC );
+}
+
+__STATIC_INLINE uint8_t hal_radio_dai_get(void)
+{
+    return (uint8_t)(NRF_RADIO->DAI );
+}
+
+__STATIC_INLINE bool hall_radio_pdustat_get()
+{
+    return (bool)(NRF_RADIO->PDUSTAT & RADIO_PDUSTAT_PDUSTAT_Msk);
+}
+
+__STATIC_INLINE uint8_t hal_radio_cistat_get(void)
+{
+    return (uint8_t)((NRF_RADIO->PDUSTAT & RADIO_PDUSTAT_CISTAT_Msk) >> RADIO_PDUSTAT_CISTAT_Pos);
+}
+
+__STATIC_INLINE void hal_radio_packetptr_set(const void * p_packet)
+{
+    NRF_RADIO->PACKETPTR = (uint32_t)p_packet;
+}
+
+__STATIC_INLINE void * hal_radio_packetptr_get(void)
+{
+    return (void *)NRF_RADIO->PACKETPTR;
+}
+
+__STATIC_INLINE void hal_radio_frequency_set(uint32_t frequency)
+{
+    if (frequency > 2500)
+    {
+        return;
+    }
+    uint32_t freq = 0;
+    if (frequency < 2400)
+    {
+        freq = ((uint32_t)frequency - 2360) | (RADIO_FREQUENCY_MAP_Low << RADIO_FREQUENCY_MAP_Pos);
+    }
+    else
+    {
+        freq = ((uint32_t)frequency - 2400) | (RADIO_FREQUENCY_MAP_Default << RADIO_FREQUENCY_MAP_Pos);
+    }
+
+    NRF_RADIO->FREQUENCY = freq;
+}
+
+__STATIC_INLINE uint32_t hal_radio_frequency_get(void)
+{
+    uint32_t freq = 0;
+
+    if (((NRF_RADIO->FREQUENCY & RADIO_FREQUENCY_MAP_Msk) >> RADIO_FREQUENCY_MAP_Pos) == RADIO_FREQUENCY_MAP_Low)
+    {
+        freq = 2360;
+    }
+    else
+    {
+        freq = 2360;
+    }
+    freq += (NRF_RADIO->FREQUENCY & RADIO_FREQUENCY_FREQUENCY_Msk) >> RADIO_FREQUENCY_FREQUENCY_Pos;
+
+    return freq;
+}
+
+// __STATIC_INLINE void hal_radio_txpower_set(hal_radio_txpower_t tx_power)
+// {
+//     NRF_RADIO->TXPOWER = (((uint32_t)tx_power) << RADIO_TXPOWER_TXPOWER_Pos);
+// }
+
+// __STATIC_INLINE hal_radio_txpower_t nrf_radio_txpower_get(void)
+// {
+//     return (hal_radio_txpower_t)(NRF_RADIO->TXPOWER >> RADIO_TXPOWER_TXPOWER_Pos);
+// }
+
+// __STATIC_INLINE void hal_radio_mode_set(hal_radio_mode_t radio_mode)
+// {
+//     NRF_RADIO->MODE = ((uint32_t) radio_mode << RADIO_MODE_MODE_Pos);
+// }
+
+// __STATIC_INLINE hal_radio_mode_t hal_radio_mode_get(void)
+// {
+//     return (hal_radio_mode_t)((NRF_RADIO->MODE & RADIO_MODE_MODE_Msk) >> RADIO_MODE_MODE_Pos);
+// }
+
+__STATIC_INLINE void hal_radio_packet_configure(const hal_radio_packet_conf_t * p_packet_conf)
+{
+    NRF_RADIO->PCNF0 = ((uint32_t)p_packet_conf->lflen << RADIO_PCNF0_LFLEN_Pos) |      // Length on air of LENGTH field in number of bits.
+                        ((uint32_t)p_packet_conf->s0len << RADIO_PCNF0_S0LEN_Pos) |     // Length on air of S0 field in number of bits.
+                        ((uint32_t)p_packet_conf->s1len << RADIO_PCNF0_S1LEN_Pos) |     // Length on air of S1 field in number of bits.
+                        (p_packet_conf->s1incl ?
+                            (RADIO_PCNF0_S1INCL_Include << RADIO_PCNF0_S1INCL_Pos):
+                            (RADIO_PCNF0_S1INCL_Automatic << RADIO_PCNF0_S1INCL_Pos)) |   
+                        ((uint32_t)p_packet_conf->plen << RADIO_PCNF0_PLEN_Pos) |
+                        (p_packet_conf->crcinc ?
+                            (RADIO_PCNF0_CRCINC_Include << RADIO_PCNF0_CRCINC_Pos):
+                            (RADIO_PCNF0_CRCINC_Exclude << RADIO_PCNF0_CRCINC_Pos)) |
+                        ((uint32_t)p_packet_conf->termlen << RADIO_PCNF0_TERMLEN_Pos);
+
+    NRF_RADIO->PCNF1 = ((uint32_t)p_packet_conf->maxlen << RADIO_PCNF1_MAXLEN_Pos) |        // Maximum length of packet payload.
+                        ((uint32_t)p_packet_conf->startlen << RADIO_PCNF1_STATLEN_Pos) |    // Static length in number of bytes
+                        ((uint32_t)p_packet_conf->balen << RADIO_PCNF1_BALEN_Pos) |         // Base address length in number of bytes.
+                        (p_packet_conf->endian ?
+                            (RADIO_PCNF1_ENDIAN_Big << RADIO_PCNF1_ENDIAN_Pos):
+                            (RADIO_PCNF1_ENDIAN_Little << RADIO_PCNF1_ENDIAN_Pos)) |
+                        (p_packet_conf->whiteen ?
+                            (RADIO_PCNF1_WHITEEN_Enabled << RADIO_PCNF1_WHITEEN_Pos):
+                            (RADIO_PCNF1_WHITEEN_Disabled << RADIO_PCNF1_WHITEEN_Pos));
+
+}
 
 
 #ifdef __cplusplus

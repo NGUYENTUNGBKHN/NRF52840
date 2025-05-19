@@ -20,9 +20,9 @@ extern "C"
 #include "drv_common.h"
 #include "drv_irq.h"
 
-__STATIC_INLINE void nrfx_power_clock_irq_init(void);
+__STATIC_INLINE void drv_power_clock_irq_init(void);
 
-__STATIC_INLINE void nrfx_power_clock_irq_init(void)
+__STATIC_INLINE void drv_power_clock_irq_init(void)
 {
     uint8_t priority = 6;
 

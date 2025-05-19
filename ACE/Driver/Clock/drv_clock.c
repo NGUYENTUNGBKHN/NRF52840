@@ -44,7 +44,7 @@ drv_sta_t drv_clock_enable()
         return DRV_STA_NG;
     }
 
-    nrfx_power_clock_irq_init();
+    drv_power_clock_irq_init();
     hal_clock_lf_src_set(HAL_CLOCK_LFCLK_SYNTH);
 
     return DRV_STA_OK;  
