@@ -42,6 +42,7 @@ extern drv_sta_t drv_clock_init(drv_clock_event_handler_t event_handler);
 extern drv_sta_t drv_clock_enable();
 
 extern void drv_clock_lfclk_start(void);
+extern drv_sta_t drv_clock_radio_enable();
 
 
 #ifdef __cplusplus

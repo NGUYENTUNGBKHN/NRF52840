@@ -148,6 +148,48 @@ typedef enum
 } hal_radio_state_t;
 
 /**
+ * @brief   Radio txpower.
+ * @details Radio txpower to indicate that a task has been started or stopped.
+ */
+typedef enum
+{
+    HAL_RADIO_TXPOWER_POS8DBM   = RADIO_TXPOWER_TXPOWER_Pos8dBm,        /*!< TX power +8 dBm */
+    HAL_RADIO_TXPOWER_POS7DBM   = RADIO_TXPOWER_TXPOWER_Pos7dBm,        /*!< TX power +7 dBm */
+    HAL_RADIO_TXPOWER_POS6DBM   = RADIO_TXPOWER_TXPOWER_Pos6dBm,        /*!< TX power +6 dBm */
+    HAL_RADIO_TXPOWER_POS5DBM   = RADIO_TXPOWER_TXPOWER_Pos5dBm,        /*!< TX power +5 dBm */
+    HAL_RADIO_TXPOWER_POS4DBM   = RADIO_TXPOWER_TXPOWER_Pos4dBm,        /*!< TX power +4 dBm */
+    HAL_RADIO_TXPOWER_POS3DBM   = RADIO_TXPOWER_TXPOWER_Pos3dBm,        /*!< TX power +3 dBm */
+    HAL_RADIO_TXPOWER_POS2DBM   = RADIO_TXPOWER_TXPOWER_Pos2dBm,        /*!< TX power +2 dBm */
+    HAL_RADIO_TXPOWER_0DBM      = RADIO_TXPOWER_TXPOWER_0dBm,           /*!< TX power 0 dBm */
+    HAL_RADIO_TXPOWER_NEG4DBM   = RADIO_TXPOWER_TXPOWER_Neg4dBm,        /*!< TX power -4 dBm */
+    HAL_RADIO_TXPOWER_NEG8DBM   = RADIO_TXPOWER_TXPOWER_Neg8dBm,        /*!< TX power -8 dBm */
+    HAL_RADIO_TXPOWER_NEG12DBM  = RADIO_TXPOWER_TXPOWER_Neg12dBm,       /*!< TX power -12 dBm */
+    HAL_RADIO_TXPOWER_NEG16DBM  = RADIO_TXPOWER_TXPOWER_Neg16dBm,       /*!< TX power -16 dBm */
+    HAL_RADIO_TXPOWER_NEG20DBM  = RADIO_TXPOWER_TXPOWER_Neg20dBm,       /*!< TX power -20 dBm */
+    HAL_RADIO_TXPOWER_NEG30DBM  = RADIO_TXPOWER_TXPOWER_Neg30dBm,       /*!< TX power -30 dBm */
+    HAL_RADIO_TXPOWER_NEG40DBM  = RADIO_TXPOWER_TXPOWER_Neg40dBm,       /*!< TX power -40 dBm */
+} hal_radio_txpower_t;
+
+typedef enum
+{
+    HAL_RADIO_MODE_NRF_1MBIT        = RADIO_MODE_MODE_Nrf_1Mbit,            /*!< NRF 1Mbit mode */
+    HAL_RADIO_MODE_NRF_2MBIT        = RADIO_MODE_MODE_Nrf_2Mbit,            /*!< NRF 2Mbit mode */
+    HAL_RADIO_MODE_BLE_1MBIT        = RADIO_MODE_MODE_Ble_1Mbit,            /*!< BLE 1Mbit mode */
+    HAL_RADIO_MODE_BLE_2MBIT        = RADIO_MODE_MODE_Ble_2Mbit,            /*!< BLE 2Mbit mode */
+    HAL_RADIO_MODE_BLE_LR125K       = RADIO_MODE_MODE_Ble_LR125Kbit,        /*!< BLE Long Range 125Kbit mode */
+    HAL_RADIO_MODE_BLE_LR500K       = RADIO_MODE_MODE_Ble_LR500Kbit,        /*!< BLE Long Range 500Kbit mode */  
+    HAL_RADIO_MODE_IEEE802154_250K  = RADIO_MODE_MODE_Ieee802154_250Kbit,   /*!< IEEE 802.15.4 250Kbit mode */
+}hal_radio_mode_t;
+
+
+typedef enum
+{
+    HAL_RADIO_CRC_ADDR_INCLUDE    = RADIO_CRCCNF_SKIPADDR_Include,    /**< CRC calculation includes address field. */
+    HAL_RADIO_CRC_ADDR_SKIP       = RADIO_CRCCNF_SKIPADDR_Skip,       /**< CRC calculation does not include address field. */
+    HAL_RADIO_CRC_ADDR_IEEE802154 = RADIO_CRCCNF_SKIPADDR_Ieee802154, /**< CRC calculation as per 802.15.4 standard. */
+}hal_radio_crc_addr_t;
+
+/**
  * @brief   Radio packet configuration.
  * @details Radio packet configuration.
  */
@@ -186,6 +228,11 @@ __STATIC_INLINE uint32_t hal_radio_task_address_get(hal_radio_task_t task)
 __STATIC_INLINE void hal_radio_event_clear(hal_radio_event_t event)
 {
     *((volatile uint32_t *)((uint8_t *)NRF_RADIO + (uint32_t)event)) = 0x00UL;
+}
+
+__STATIC_INLINE bool hal_radio_event_check(hal_radio_event_t event)
+{
+    return (bool) *((volatile uint32_t *)((uint8_t *)NRF_RADIO + (uint32_t)event));
 }
 
 __STATIC_INLINE uint32_t hal_radio_event_address_get(hal_radio_event_t event)
@@ -274,21 +321,21 @@ __STATIC_INLINE void * hal_radio_packetptr_get(void)
 
 __STATIC_INLINE void hal_radio_frequency_set(uint32_t frequency)
 {
-    if (frequency > 2500)
-    {
-        return;
-    }
-    uint32_t freq = 0;
-    if (frequency < 2400)
-    {
-        freq = ((uint32_t)frequency - 2360) | (RADIO_FREQUENCY_MAP_Low << RADIO_FREQUENCY_MAP_Pos);
-    }
-    else
-    {
-        freq = ((uint32_t)frequency - 2400) | (RADIO_FREQUENCY_MAP_Default << RADIO_FREQUENCY_MAP_Pos);
-    }
+    // if (frequency > 2500)
+    // {
+    //     return;
+    // }
+    // uint32_t freq = 0;
+    // if (frequency < 2400)
+    // {
+    //     freq = ((uint32_t)frequency - 2360) | (RADIO_FREQUENCY_MAP_Low << RADIO_FREQUENCY_MAP_Pos);
+    // }
+    // else
+    // {
+    //     freq = ((uint32_t)frequency - 2400) | (RADIO_FREQUENCY_MAP_Default << RADIO_FREQUENCY_MAP_Pos);
+    // }
 
-    NRF_RADIO->FREQUENCY = freq;
+    NRF_RADIO->FREQUENCY = frequency;
 }
 
 __STATIC_INLINE uint32_t hal_radio_frequency_get(void)
@@ -308,31 +355,31 @@ __STATIC_INLINE uint32_t hal_radio_frequency_get(void)
     return freq;
 }
 
-// __STATIC_INLINE void hal_radio_txpower_set(hal_radio_txpower_t tx_power)
-// {
-//     NRF_RADIO->TXPOWER = (((uint32_t)tx_power) << RADIO_TXPOWER_TXPOWER_Pos);
-// }
+__STATIC_INLINE void hal_radio_txpower_set(hal_radio_txpower_t tx_power)
+{
+    NRF_RADIO->TXPOWER = (((uint32_t)tx_power) << RADIO_TXPOWER_TXPOWER_Pos);
+}
 
-// __STATIC_INLINE hal_radio_txpower_t nrf_radio_txpower_get(void)
-// {
-//     return (hal_radio_txpower_t)(NRF_RADIO->TXPOWER >> RADIO_TXPOWER_TXPOWER_Pos);
-// }
+__STATIC_INLINE hal_radio_txpower_t nrf_radio_txpower_get(void)
+{
+    return (hal_radio_txpower_t)(NRF_RADIO->TXPOWER >> RADIO_TXPOWER_TXPOWER_Pos);
+}
 
-// __STATIC_INLINE void hal_radio_mode_set(hal_radio_mode_t radio_mode)
-// {
-//     NRF_RADIO->MODE = ((uint32_t) radio_mode << RADIO_MODE_MODE_Pos);
-// }
+__STATIC_INLINE void hal_radio_mode_set(hal_radio_mode_t radio_mode)
+{
+    NRF_RADIO->MODE = ((uint32_t) radio_mode << RADIO_MODE_MODE_Pos);
+}
 
-// __STATIC_INLINE hal_radio_mode_t hal_radio_mode_get(void)
-// {
-//     return (hal_radio_mode_t)((NRF_RADIO->MODE & RADIO_MODE_MODE_Msk) >> RADIO_MODE_MODE_Pos);
-// }
+__STATIC_INLINE hal_radio_mode_t hal_radio_mode_get(void)
+{
+    return (hal_radio_mode_t)((NRF_RADIO->MODE & RADIO_MODE_MODE_Msk) >> RADIO_MODE_MODE_Pos);
+}
 
 __STATIC_INLINE void hal_radio_packet_configure(const hal_radio_packet_conf_t * p_packet_conf)
 {
-    NRF_RADIO->PCNF0 = ((uint32_t)p_packet_conf->lflen << RADIO_PCNF0_LFLEN_Pos) |      // Length on air of LENGTH field in number of bits.
+    NRF_RADIO->PCNF0 = (((uint32_t)p_packet_conf->lflen << RADIO_PCNF0_LFLEN_Pos) |      // Length on air of LENGTH field in number of bits.
                         ((uint32_t)p_packet_conf->s0len << RADIO_PCNF0_S0LEN_Pos) |     // Length on air of S0 field in number of bits.
-                        ((uint32_t)p_packet_conf->s1len << RADIO_PCNF0_S1LEN_Pos) |     // Length on air of S1 field in number of bits.
+                        ((uint32_t)p_packet_conf->s1len << RADIO_PCNF0_S1LEN_Pos) |    // Length on air of S1 field in number of bits.
                         (p_packet_conf->s1incl ?
                             (RADIO_PCNF0_S1INCL_Include << RADIO_PCNF0_S1INCL_Pos):
                             (RADIO_PCNF0_S1INCL_Automatic << RADIO_PCNF0_S1INCL_Pos)) |   
@@ -340,9 +387,9 @@ __STATIC_INLINE void hal_radio_packet_configure(const hal_radio_packet_conf_t * 
                         (p_packet_conf->crcinc ?
                             (RADIO_PCNF0_CRCINC_Include << RADIO_PCNF0_CRCINC_Pos):
                             (RADIO_PCNF0_CRCINC_Exclude << RADIO_PCNF0_CRCINC_Pos)) |
-                        ((uint32_t)p_packet_conf->termlen << RADIO_PCNF0_TERMLEN_Pos);
+                        ((uint32_t)p_packet_conf->termlen << RADIO_PCNF0_TERMLEN_Pos));
 
-    NRF_RADIO->PCNF1 = ((uint32_t)p_packet_conf->maxlen << RADIO_PCNF1_MAXLEN_Pos) |        // Maximum length of packet payload.
+    NRF_RADIO->PCNF1 = (((uint32_t)p_packet_conf->maxlen << RADIO_PCNF1_MAXLEN_Pos) |        // Maximum length of packet payload.
                         ((uint32_t)p_packet_conf->startlen << RADIO_PCNF1_STATLEN_Pos) |    // Static length in number of bytes
                         ((uint32_t)p_packet_conf->balen << RADIO_PCNF1_BALEN_Pos) |         // Base address length in number of bytes.
                         (p_packet_conf->endian ?
@@ -350,8 +397,95 @@ __STATIC_INLINE void hal_radio_packet_configure(const hal_radio_packet_conf_t * 
                             (RADIO_PCNF1_ENDIAN_Little << RADIO_PCNF1_ENDIAN_Pos)) |
                         (p_packet_conf->whiteen ?
                             (RADIO_PCNF1_WHITEEN_Enabled << RADIO_PCNF1_WHITEEN_Pos):
-                            (RADIO_PCNF1_WHITEEN_Disabled << RADIO_PCNF1_WHITEEN_Pos));
+                            (RADIO_PCNF1_WHITEEN_Disabled << RADIO_PCNF1_WHITEEN_Pos)));
 
+}
+
+__STATIC_INLINE void hal_radio_base0_set(uint32_t address)
+{
+    NRF_RADIO->BASE0 = address;
+}
+
+__STATIC_INLINE uint32_t hal_radio_base0_get(void)
+{
+    return NRF_RADIO->BASE0;
+}
+
+__STATIC_INLINE void hal_radio_base1_set(uint32_t address)
+{
+    NRF_RADIO->BASE1 = address;
+}
+
+__STATIC_INLINE uint32_t hal_radio_base1_get(void)
+{
+    return NRF_RADIO->BASE1;
+}
+
+__STATIC_INLINE void hal_radio_prefix0_set(uint32_t prefix0_value)
+{
+    NRF_RADIO->PREFIX0 = prefix0_value;
+}
+
+__STATIC_INLINE uint32_t hal_radio_prefix0_get(void)
+{
+    return NRF_RADIO->PREFIX0;
+}
+
+__STATIC_INLINE void hal_radio_prefix1_set(uint32_t prefix1_value)
+{
+    NRF_RADIO->PREFIX1 = prefix1_value;
+}
+
+__STATIC_INLINE uint32_t hal_radio_prefix1_get(void)
+{
+    return NRF_RADIO->PREFIX1;
+}
+
+__STATIC_INLINE void hal_radio_datawhiteiv_set(uint8_t datawhiteiv)
+{
+    NRF_RADIO->DATAWHITEIV = (((uint32_t)datawhiteiv) & RADIO_DATAWHITEIV_DATAWHITEIV_Msk);
+}
+
+__STATIC_INLINE void hal_radio_power_set(bool radio_power)
+{
+    NRF_RADIO->POWER = (uint32_t) radio_power;
+}
+
+__STATIC_INLINE void hal_radio_txaddress_set(uint8_t txaddress)
+{
+    NRF_RADIO->TXADDRESS = ((uint32_t)txaddress) << RADIO_TXADDRESS_TXADDRESS_Pos;
+}
+
+__STATIC_INLINE uint8_t hal_radio_txaddress_get(void)
+{
+    return (uint8_t)((NRF_RADIO->TXADDRESS & RADIO_TXADDRESS_TXADDRESS_Msk) >>
+                    RADIO_TXADDRESS_TXADDRESS_Pos);
+}
+
+__STATIC_INLINE void hal_radio_crc_configure(uint8_t              crc_length,
+                                             hal_radio_crc_addr_t crc_address,
+                                             uint32_t             crc_polynominal)
+{
+    NRF_RADIO->CRCCNF = ((uint32_t)crc_length  << RADIO_CRCCNF_LEN_Pos) |
+                        ((uint32_t)crc_address << RADIO_CRCCNF_SKIPADDR_Pos);
+    NRF_RADIO->CRCPOLY = (crc_polynominal << RADIO_CRCPOLY_CRCPOLY_Pos);
+}
+
+__STATIC_INLINE void hal_radio_crcinit_set(uint32_t crc_init_value)
+{
+    NRF_RADIO->CRCINIT = crc_init_value;
+}
+
+__STATIC_INLINE uint32_t hal_radio_crcinit_get(void)
+{
+    return NRF_RADIO->CRCINIT;
+}
+
+__STATIC_INLINE void hal_radio_modecnf0_set(bool fast_ramp_up, uint8_t default_tx)
+{
+    NRF_RADIO->MODECNF0 = (fast_ramp_up ? (RADIO_MODECNF0_RU_Fast    << RADIO_MODECNF0_RU_Pos) :
+                                          (RADIO_MODECNF0_RU_Default << RADIO_MODECNF0_RU_Pos) ) |
+                          (((uint32_t)default_tx) << RADIO_MODECNF0_DTX_Pos);
 }
 
 

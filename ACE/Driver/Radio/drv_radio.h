@@ -19,6 +19,8 @@ extern "C"
 
 /* CODE */
 #include "drv_common.h"
+// #include "drv_irq.h"
+#include "hal_radio.h"
 
 typedef enum DRV_RADIO_EVENT_S
 {
@@ -55,9 +57,12 @@ typedef struct DRV_RADIO_CB_S
     bool                     drv_initialized; /*!< Driver initialized */
 }drv_radio_cb_t;
 
+// typedef struct drv_radio_packet_conf_t;
+#define drv_radio_packet_conf_t hal_radio_packet_conf_t
+
 extern drv_sta_t drv_radio_init(drv_radio_event_handler_t event_handler);
-extern drv_sta_t drv_radio_enable(void);
-extern drv_sta_t drv_radio_disable(void);
+extern drv_sta_t drv_radio_config();
+extern drv_sta_t drv_radio_send_data(uint8_t channel_index);
 // extern drv_sta_t drv_radio_set_packet(hal_radio_packet_conf_t *packet_conf);
 
 

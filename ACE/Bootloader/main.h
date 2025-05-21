@@ -25,6 +25,7 @@ extern "C"
 #include "log.h"
 #include "bootloader.h"
 #include "drv_clock.h"
+#include "drv_radio.h"
 
 #ifdef __cplusplus
 }

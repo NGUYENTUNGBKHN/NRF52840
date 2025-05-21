@@ -11,6 +11,7 @@
 ******************************************************************************/
 
 #include "bootloader.h"
+#include "log/log.h"
 
 void delay(uint32_t count)
 {
@@ -21,15 +22,50 @@ void delay(uint32_t count)
     }
 }
 
+void radio_handler(drv_radio_event_t event)
+{
+    switch (event)
+    {
+    case DRV_RADIO_EVENT_READY:
+        // ace_trace_log("radio ready \n");
+        break;
+    case DRV_RADIO_EVENT_END:
+        // ace_trace_log("radio end \n");
+        break;
+    case DRV_RADIO_EVENT_DISABLED:
+        /* code */
+        ace_trace_log("Send complete \n");
+        // drv_radio_send_data();
+        break;
+    
+    default:
+        break;
+    }
+}
+
+void clock_handler(drv_clock_evt_type_t event)
+{
+    switch (event)
+    {
+    case DRV_CLOCK_EVT_HFCLK_STARTED:
+        /* code */
+        ace_trace_log("HF enable \n");
+        // logPrintf("HF enable \n");
+        break;
+    
+    default:
+        break;
+    }
+}
 
 void bootloader()
 {
+    static uint8_t channel = 0;
     ace_trace_log("Bootloader start\n");
     while (1)
     {
         /* code */
         // Use directly __WFE and __SEV macros since the SoftDevice is not available.
-
         // Wait for event.
         // __WFE();
     }

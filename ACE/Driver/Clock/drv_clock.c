@@ -33,7 +33,19 @@ drv_sta_t drv_clock_init(drv_clock_event_handler_t event_handler)
 
     m_clock_cb.event_handler = event_handler;
     m_clock_cb.drv_initialized = true;
-    ace_trace_log("drv_clock_init\n");
+    return DRV_STA_OK;
+}
+
+drv_sta_t drv_clock_radio_enable()
+{
+    if (m_clock_cb.drv_initialized == false)
+    {
+        return DRV_STA_NG;
+    }
+    drv_power_clock_irq_init();
+    hal_clock_interrupt_enable(HAL_CLOCK_INT_HFCLKSTARTED_MASK);
+    hal_clock_task_trigger(HAL_CLOCK_TASK_HFCLKSTART);
+    // while (!hal_clock_event_check(HAL_CLOCK_EVENT_HFCLKSTARTED));
     return DRV_STA_OK;
 }
 
@@ -45,7 +57,7 @@ drv_sta_t drv_clock_enable()
     }
 
     drv_power_clock_irq_init();
-    hal_clock_lf_src_set(HAL_CLOCK_LFCLK_SYNTH);
+    hal_clock_lf_src_set(HAL_CLOCK_LFCLK_XTAL);
 
     return DRV_STA_OK;  
 }
@@ -57,7 +69,6 @@ void drv_clock_lfclk_start(void)
     hal_clock_interrupt_enable(HAL_CLOCK_INT_LFCLKSTARTED_MASK);
 
     hal_clock_task_trigger(HAL_CLOCK_TASK_LFCLKSTART);
-    ace_trace_log("%s\n", __func__);
 }
 
 drv_sta_t drv_clock_irq_handler()

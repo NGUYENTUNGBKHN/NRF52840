@@ -51,6 +51,17 @@ static inline void _DRV_IRQ_ENABLE(IRQn_Type irq_number)
 }
 
 /**
+ * @brief Macro for disabling a specific IRQ.
+ *
+ * @param irq_number  IRQ number.
+ */
+#define DRV_IRQ_DISABLE(irq_number)  _DRV_IRQ_DISABLE(irq_number)
+static inline void _DRV_IRQ_DISABLE(IRQn_Type irq_number)
+{
+    NVIC_DisableIRQ(irq_number);
+}
+
+/**
  * @brief Macro for checking if a specific IRQ is enabled.
  *
  * @param irq_number  IRQ number.

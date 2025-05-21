@@ -21,7 +21,8 @@ extern "C"
 
 // POWER_CLOCK_IRQn
 #define drv_power_clock_irq_handler    POWER_CLOCK_IRQHandler
-
+// RADIO 
+#define drv_radio_irq_handler          RADIO_IRQHandler
 
 #ifdef __cplusplus
 }

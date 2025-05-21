@@ -80,6 +80,7 @@ void SVC_Handler(void) __attribute((weak, alias("empty_handler")));
 void PendSV_Handler(void) __attribute((weak, alias("empty_handler")));
 void SysTick_Handler(void) __attribute((weak, alias("empty_handler")));
 void POWER_CLOCK_IRQHandler(void) __attribute((weak, alias("empty_handler")));
+void RADIO_IRQHandler(void) __attribute((weak, alias("empty_handler")));
 
 __attribute((section(".isr_vector")))
 uint32_t *_isr_vector[] = {
@@ -101,5 +102,6 @@ uint32_t *_isr_vector[] = {
     (uint32_t*) SysTick_Handler,          /* SysTick handler */
     /* External interrupts */
     (uint32_t*) POWER_CLOCK_IRQHandler,
+    (uint32_t*) RADIO_IRQHandler,
 };
 

@@ -8,7 +8,7 @@ int main()
 {
     ace_trace_init();
     ace_trace_log("ACE Bootloader\n");
-    
+
     tung[0] = 0x06;
 
     if (0)

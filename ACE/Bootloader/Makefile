@@ -49,6 +49,8 @@ SRC_INCLUDE+=$(wildcard $(EXTERNAL_DIR)/Trace/*.c)
 SRC_INCLUDE+=$(wildcard $(MIDDLER_DIR)/Log/*.c)
 SRC_INCLUDE+=$(wildcard $(DRIVER_DIR)/Uart/*.c)
 SRC_INCLUDE+=$(wildcard $(DRIVER_DIR)/Clock/*.c)
+SRC_INCLUDE+=$(wildcard $(DRIVER_DIR)/Radio/*.c)
+
 # SRC_FILES+=$(wildcard $(OSKERNEL_DIR)/*.s)
 SRC_FILES:=$(filter-out $(SRC_EXCLUDE), $(SRC_INCLUDE))
 
@@ -63,6 +65,7 @@ INC_FOLDERS=\
 	$(DRIVER_DIR)\
 	$(DRIVER_DIR)/Uart\
 	$(DRIVER_DIR)/Clock\
+	$(DRIVER_DIR)/Radio\
 	$(HAL_DIR)\
 
 LIBS+=
