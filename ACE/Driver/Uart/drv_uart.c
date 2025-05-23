@@ -112,14 +112,14 @@ drv_sta_t drv_uart_send_data_byte(uint8_t data)
     return DRV_STA_OK;
 }
 
-drv_sta_t drv_uart_received(uint8_t *data)
+drv_sta_t drv_uart_received(uint8_t data)
 {
     if (!m_drv_uart0.drv_initialized)
     {
         return DRV_STA_NG;
     }
 
-    *data = hal_uart_rxd_get(m_drv_uart0.reg);
+    data = hal_uart_rxd_get(m_drv_uart0.reg);
     return DRV_STA_OK;
 }
 

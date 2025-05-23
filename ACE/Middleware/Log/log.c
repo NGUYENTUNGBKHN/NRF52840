@@ -11,6 +11,7 @@
 ******************************************************************************/
 #include "log.h"
 #include "drv_uart.h"
+#include "Trace/ace_trace.h"
 
 void uart_handler(drv_uart_event evt, void *p_context)
 {

@@ -72,10 +72,10 @@ void bootloader()
         /* code */
         // Use directly __WFE and __SEV macros since the SoftDevice is not available.
         // logPrintf("hello \n");
-        drv_uart_received(&data);
+        drv_uart_received(data);
         if (data == 0x31)
         {
-            ace_trace_log("OK\n");
+            drv_uart_send_data_byte(data);
             data = 0;
         }
         
