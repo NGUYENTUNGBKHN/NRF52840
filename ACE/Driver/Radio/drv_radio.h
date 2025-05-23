@@ -19,8 +19,6 @@ extern "C"
 
 /* CODE */
 #include "drv_common.h"
-// #include "drv_irq.h"
-#include "hal_radio.h"
 
 typedef enum DRV_RADIO_EVENT_S
 {

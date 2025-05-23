@@ -19,6 +19,10 @@ extern "C"
 
 #include "stdbool.h"
 #include "nrf52840.h"
+#include "hal_uart.h"
+#include "hal_uarte.h"
+#include "hal_clock.h"
+#include "hal_radio.h"
 
 #define DRV_PERIPHERAL_ID_GET(base_addr)  (uint8_t)((uint32_t)(base_addr) >> 12)
 
@@ -76,8 +80,7 @@ static inline bool _DRV_IRQ_IS_ENABLED(IRQn_Type irq_number)
 }
 
 
-/* CODE */
-#include "hal_clock.h"
+
 
 typedef enum DRV_STA_s
 {

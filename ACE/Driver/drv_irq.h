@@ -23,6 +23,9 @@ extern "C"
 #define drv_power_clock_irq_handler    POWER_CLOCK_IRQHandler
 // RADIO 
 #define drv_radio_irq_handler          RADIO_IRQHandler
+// UART
+#define drv_uart_irq_handler            UARTE0_UART0_IRQHandler
+// UARTE
 
 #ifdef __cplusplus
 }
