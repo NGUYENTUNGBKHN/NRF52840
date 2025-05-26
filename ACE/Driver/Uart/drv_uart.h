@@ -118,7 +118,7 @@ extern drv_sta_t drv_uart_init(uint8_t index);
 extern drv_sta_t drv_uart_deinit();
 extern drv_sta_t drv_uart_config(drv_uart_handler_t func);
 extern drv_sta_t drv_uart_send_data_byte(uint8_t data);
-extern drv_sta_t drv_uart_received(uint8_t data);
+extern drv_sta_t drv_uart_received(uint8_t *data);
 
 #ifdef __cplusplus
 }

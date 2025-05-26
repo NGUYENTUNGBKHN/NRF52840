@@ -66,20 +66,13 @@ void bootloader()
     uint8_t data;
     ace_trace_log("Bootloader start\n");
     logInit();
-    // drv_uart_send_data_byte(2);
     while (1)
     {
         /* code */
         // Use directly __WFE and __SEV macros since the SoftDevice is not available.
-        // logPrintf("hello \n");
-        drv_uart_received(data);
-        if (data == 0x31)
-        {
-            drv_uart_send_data_byte(data);
-            data = 0;
-        }
-        
-        // delay(1000000);
+        logPrintf("hello \n");
+
+        delay(1000000);
         // Wait for event.
         // __WFE();
     }

@@ -15,13 +15,14 @@
 
 void uart_handler(drv_uart_event evt, void *p_context)
 {
+    
     switch (evt)
     {
     case DRV_UART_EVENT_TX_DONE:
         // ace_trace_log("tx done\n");
         break;
     case DRV_UART_EVENT_RX_DONE:
-        ace_trace_log("rx done\n");
+        // ace_trace_log("rx done\n");
         break;
     default:
         break;

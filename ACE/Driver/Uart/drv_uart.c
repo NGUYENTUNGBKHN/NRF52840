@@ -74,6 +74,7 @@ drv_sta_t drv_uart_config(drv_uart_handler_t func)
         return DRV_STA_NG;
     }
     m_drv_uart0.drv_initialized = 1;
+    /* Configure gpio of UART */
     m_drv_uart0.cfg.rdx_pin = DRV_UART_PSEL_SETUP(PORT0, RX_PIN_NUMBER);
     m_drv_uart0.cfg.tdx_pin = DRV_UART_PSEL_SETUP(PORT0, TX_PIN_NUMBER);
 
@@ -83,8 +84,8 @@ drv_sta_t drv_uart_config(drv_uart_handler_t func)
     hal_uart_baudrate_set(m_drv_uart0.reg, m_drv_uart0.cfg.baudrate);
     hal_uart_enable(m_drv_uart0.reg);
     hal_uart_txrx_pins_set(m_drv_uart0.reg, m_drv_uart0.cfg.tdx_pin, m_drv_uart0.cfg.rdx_pin);
-    hal_uart_int_enable(m_drv_uart0.reg, HAL_UART_INT_MASK_RXDRDY | HAL_UART_INT_MASK_TXDRDY);
-    hal_uart_task_trigger(m_drv_uart0.reg, HAL_UART_TASK_STARTTX | HAL_UART_TASK_STARTRX);
+    hal_uart_int_enable(m_drv_uart0.reg, HAL_UART_INT_MASK_TXDRDY);
+    
     drv_uart_irq_enable();
     return DRV_STA_OK;
 }
@@ -101,25 +102,39 @@ drv_sta_t drv_uart_send_data_byte(uint8_t data)
     {
         return DRV_STA_NG;
     }
+    /* Clear event tx ready */
+    hal_uart_event_clear(m_drv_uart0.reg, HAL_UART_EVENT_TXDRDY);
+    /* start Tx */
+    hal_uart_task_trigger(m_drv_uart0.reg, HAL_UART_TASK_STARTTX);
+    /* flag interrupt tx */
     drv_uart_tx_flag_done = 1;
+    /* set tx */
     hal_uart_txd_set(m_drv_uart0.reg, data);
     while (drv_uart_tx_flag_done)
     {
         /* code */
     }
-    
-
+    hal_uart_task_trigger(m_drv_uart0.reg, HAL_UART_TASK_STOPTX);
     return DRV_STA_OK;
 }
 
-drv_sta_t drv_uart_received(uint8_t data)
+drv_sta_t drv_uart_received(uint8_t *data)
 {
     if (!m_drv_uart0.drv_initialized)
     {
         return DRV_STA_NG;
     }
 
-    data = hal_uart_rxd_get(m_drv_uart0.reg);
+    hal_uart_event_clear(m_drv_uart0.reg, HAL_UART_EVENT_RXDRDY);
+    hal_uart_task_trigger(m_drv_uart0.reg, HAL_UART_TASK_STARTRX);
+    *data = hal_uart_rxd_get(m_drv_uart0.reg);
+    if (m_drv_uart0.cfg.func == NULL)
+    {
+        /* code */
+        // while();
+    }
+    
+
     return DRV_STA_OK;
 }
 
