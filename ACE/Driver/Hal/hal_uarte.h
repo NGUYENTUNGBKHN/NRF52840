@@ -163,17 +163,17 @@ __STATIC_INLINE void hal_uarte_shorts_disable(NRF_UARTE_Type * p_reg, hal_uarte_
 }
 
 /* Interrupt */
-__STATIC_INLINE void nrf_uarte_int_enable(NRF_UARTE_Type * p_reg, hal_uarte_int_mask_t mask)
+__STATIC_INLINE void hal_uarte_int_enable(NRF_UARTE_Type * p_reg, hal_uarte_int_mask_t mask)
 {
     p_reg->INTENSET = mask;
 }
 
-__STATIC_INLINE bool nrf_uarte_int_enable_check(NRF_UARTE_Type * p_reg, hal_uarte_int_mask_t mask)
+__STATIC_INLINE bool hal_uarte_int_enable_check(NRF_UARTE_Type * p_reg, hal_uarte_int_mask_t mask)
 {
     return (bool)(p_reg->INTENSET & mask);
 }
 
-__STATIC_INLINE void nrf_uarte_int_disable(NRF_UARTE_Type * p_reg, hal_uarte_int_mask_t mask)
+__STATIC_INLINE void hal_uarte_int_disable(NRF_UARTE_Type * p_reg, hal_uarte_int_mask_t mask)
 {
     p_reg->INTENCLR = mask;
 }
@@ -188,24 +188,24 @@ __STATIC_INLINE uint32_t hal_uarte_task_address_get(NRF_UARTE_Type * p_reg, hal_
     return (uint32_t)p_reg + (uint32_t)task;
 }
 
-__STATIC_INLINE uint32_t nrf_uarte_errorsrc_get_and_clear(NRF_UARTE_Type * p_reg)
+__STATIC_INLINE uint32_t hal_uarte_errorsrc_get_and_clear(NRF_UARTE_Type * p_reg)
 {
     uint32_t errsrc_mask = p_reg->ERRORSRC;
     p_reg->ERRORSRC = errsrc_mask;
     return errsrc_mask;
 }
 
-__STATIC_INLINE void nrf_uarte_enable(NRF_UARTE_Type * p_reg)
+__STATIC_INLINE void hal_uarte_enable(NRF_UARTE_Type * p_reg)
 {
     p_reg->ENABLE = UARTE_ENABLE_ENABLE_Enabled;
 }
 
-__STATIC_INLINE void nrf_uarte_disable(NRF_UARTE_Type * p_reg)
+__STATIC_INLINE void hal_uarte_disable(NRF_UARTE_Type * p_reg)
 {
     p_reg->ENABLE = UARTE_ENABLE_ENABLE_Disabled;
 }
 
-__STATIC_INLINE void nrf_uarte_txrx_pins_set(NRF_UARTE_Type * p_reg, uint32_t pseltxd, uint32_t pselrxd)
+__STATIC_INLINE void hal_uarte_txrx_pins_set(NRF_UARTE_Type * p_reg, uint32_t pseltxd, uint32_t pselrxd)
 {
     p_reg->PSEL.TXD = pseltxd;
     p_reg->PSEL.RXD = pselrxd;
@@ -213,7 +213,7 @@ __STATIC_INLINE void nrf_uarte_txrx_pins_set(NRF_UARTE_Type * p_reg, uint32_t ps
 
 __STATIC_INLINE void hal_uarte_txrx_pins_disconnect(NRF_UARTE_Type * p_reg)
 {
-    nrf_uarte_txrx_pins_set(p_reg, HAL_UARTE_PSEL_DISCONNECTED, HAL_UARTE_PSEL_DISCONNECTED);
+    hal_uarte_txrx_pins_set(p_reg, HAL_UARTE_PSEL_DISCONNECTED, HAL_UARTE_PSEL_DISCONNECTED);
 }
 
 __STATIC_INLINE uint32_t hal_uarte_tx_pin_get(NRF_UARTE_Type * p_reg)
@@ -247,7 +247,7 @@ __STATIC_INLINE void hal_uarte_hwfc_pins_disconnect(NRF_UARTE_Type * p_reg)
     hal_uarte_hwfc_pins_set(p_reg, HAL_UARTE_PSEL_DISCONNECTED, HAL_UARTE_PSEL_DISCONNECTED);
 }
 
-__STATIC_INLINE void nrf_uarte_configure(NRF_UARTE_Type   * p_reg,
+__STATIC_INLINE void hal_uarte_configure(NRF_UARTE_Type   * p_reg,
                                          hal_uarte_parity_t parity,
                                          hal_uarte_hwfc_t   hwfc,
                                          hal_uarte_stopbit_t  stopbit)

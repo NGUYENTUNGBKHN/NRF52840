@@ -22,6 +22,9 @@
 
 static drv_uart_t m_drv_uart0 = {0};
 volatile static uint8_t drv_uart_tx_flag_done = 0;
+volatile static uint8_t drv_uart_rx_timeout = 0;
+
+static drv_uart_ring_buffer_t drv_uart_ring_buffer; 
 
 static void drv_uart_irq_enable()
 {
@@ -54,6 +57,9 @@ drv_sta_t drv_uart_init(uint8_t index)
     if (index == 0)
     {
         m_drv_uart0 = (drv_uart_t)DRV_UART_INSTANCE0;
+        m_drv_uart0.drv_initialized = 1;
+        drv_uart_ring_buffer.head = 0;
+        drv_uart_ring_buffer.tail = 0;
     }
     else
     {
@@ -64,16 +70,10 @@ drv_sta_t drv_uart_init(uint8_t index)
 
 drv_sta_t drv_uart_config(drv_uart_handler_t func)
 {
-    if ((m_drv_uart0.drv_initialized != 0) || (m_drv_uart0.cfg.func != NULL))
+    if (!m_drv_uart0.drv_initialized)
     {
         return DRV_STA_NG;
     }
-
-    if (NULL == func)
-    {
-        return DRV_STA_NG;
-    }
-    m_drv_uart0.drv_initialized = 1;
     /* Configure gpio of UART */
     m_drv_uart0.cfg.rdx_pin = DRV_UART_PSEL_SETUP(PORT0, RX_PIN_NUMBER);
     m_drv_uart0.cfg.tdx_pin = DRV_UART_PSEL_SETUP(PORT0, TX_PIN_NUMBER);
@@ -83,9 +83,8 @@ drv_sta_t drv_uart_config(drv_uart_handler_t func)
     hal_uart_configure(m_drv_uart0.reg, m_drv_uart0.cfg.parity, m_drv_uart0.cfg.hwfc, m_drv_uart0.cfg.stopbit);
     hal_uart_baudrate_set(m_drv_uart0.reg, m_drv_uart0.cfg.baudrate);
     hal_uart_enable(m_drv_uart0.reg);
-    hal_uart_txrx_pins_set(m_drv_uart0.reg, m_drv_uart0.cfg.tdx_pin, m_drv_uart0.cfg.rdx_pin);
-    hal_uart_int_enable(m_drv_uart0.reg, HAL_UART_INT_MASK_TXDRDY);
-    
+    hal_uart_txrx_pins_set(m_drv_uart0.reg, m_drv_uart0.cfg.tdx_pin, m_drv_uart0.cfg.rdx_pin);;
+
     drv_uart_irq_enable();
     return DRV_STA_OK;
 }
@@ -96,42 +95,83 @@ drv_sta_t drv_uart_deinit()
     return DRV_STA_OK;
 }
 
-drv_sta_t drv_uart_send_data_byte(uint8_t data)
+drv_sta_t drv_uart_send_data_it(uint8_t *data, uint16_t len)
 {
     if (!m_drv_uart0.drv_initialized)
     {
         return DRV_STA_NG;
     }
-    /* Clear event tx ready */
-    hal_uart_event_clear(m_drv_uart0.reg, HAL_UART_EVENT_TXDRDY);
-    /* start Tx */
-    hal_uart_task_trigger(m_drv_uart0.reg, HAL_UART_TASK_STARTTX);
-    /* flag interrupt tx */
-    drv_uart_tx_flag_done = 1;
-    /* set tx */
-    hal_uart_txd_set(m_drv_uart0.reg, data);
-    while (drv_uart_tx_flag_done)
+    if ((m_drv_uart0.cfg.func == NULL) && !hal_uart_int_enable_check(m_drv_uart0.reg, HAL_UART_INT_MASK_TXDRDY))
     {
-        /* code */
+        return DRV_STA_NG;
     }
-    hal_uart_task_trigger(m_drv_uart0.reg, HAL_UART_TASK_STOPTX);
+    /* interrupt */
+    hal_uart_int_enable(m_drv_uart0.reg, HAL_UART_INT_MASK_TXDRDY);
+    /* Triggger tx */
+    hal_uart_task_trigger(m_drv_uart0.reg, HAL_UART_TASK_STARTTX);
+    
+    for (int i = 0; i < len; i++)
+    {
+        drv_uart_ring_buffer.data[drv_uart_ring_buffer.head] = data[i];
+        drv_uart_ring_buffer.head++;
+    }
+    
+    hal_uart_txd_set(m_drv_uart0.reg, drv_uart_ring_buffer.data[drv_uart_ring_buffer.tail]);
+    drv_uart_ring_buffer.tail++;
+
     return DRV_STA_OK;
 }
 
-drv_sta_t drv_uart_received(uint8_t *data)
+drv_sta_t drv_uart_send_data(uint8_t *data, uint16_t len)
 {
     if (!m_drv_uart0.drv_initialized)
     {
         return DRV_STA_NG;
     }
-
-    hal_uart_event_clear(m_drv_uart0.reg, HAL_UART_EVENT_RXDRDY);
-    hal_uart_task_trigger(m_drv_uart0.reg, HAL_UART_TASK_STARTRX);
-    *data = hal_uart_rxd_get(m_drv_uart0.reg);
-    if (m_drv_uart0.cfg.func == NULL)
+    if ((m_drv_uart0.cfg.func == NULL) && !hal_uart_int_enable_check(m_drv_uart0.reg, HAL_UART_INT_MASK_TXDRDY))
     {
+        /* Triggger tx */
+        hal_uart_task_trigger(m_drv_uart0.reg, HAL_UART_TASK_STARTTX);
+        /* Start Tx */
+        for (int i = 0; i < len; i++)
+        {
+            /* Set tx */
+            hal_uart_txd_set(m_drv_uart0.reg, data[i]);
+            /* Wait event tx ready done */
+            while (!hal_uart_event_check(m_drv_uart0.reg, HAL_UART_EVENT_TXDRDY)) {}
+            /* Clear event tx ready */
+            hal_uart_event_clear(m_drv_uart0.reg, HAL_UART_EVENT_TXDRDY);
+        }
+        
+        /* Stop Tx */
+        hal_uart_task_trigger(m_drv_uart0.reg, HAL_UART_TASK_STOPTX);
+        return DRV_STA_OK;
+    }
+    
+    return DRV_STA_NG;
+}
+
+drv_sta_t drv_uart_received_polling(uint8_t *data, uint32_t len)
+{
+    uint8_t i = 0;
+    if (!m_drv_uart0.drv_initialized)
+    {
+        return DRV_STA_NG;
+    }
+    
+    if ((m_drv_uart0.cfg.func == NULL) && !hal_uart_int_enable_check(m_drv_uart0.reg, HAL_UART_INT_MASK_RXDRDY))
+    {
+        /* Clear flag event rx ready */
+        hal_uart_event_clear(m_drv_uart0.reg, HAL_UART_EVENT_RXDRDY);
+        /* Trigger rx */
+        hal_uart_task_trigger(m_drv_uart0.reg, HAL_UART_TASK_STARTRX);
         /* code */
-        // while();
+        while(!hal_uart_event_check(m_drv_uart0.reg, HAL_UART_EVENT_RXDRDY)){}
+        data[i] = hal_uart_rxd_get(m_drv_uart0.reg);
+        i++;
+        hal_uart_event_clear(m_drv_uart0.reg, HAL_UART_EVENT_RXDRDY);
+
+        hal_uart_task_trigger(m_drv_uart0.reg, HAL_UART_TASK_STOPRX);
     }
     
 
@@ -142,17 +182,31 @@ drv_sta_t drv_uart_irq_handler(void)
 {
     if (hal_uart_event_check(m_drv_uart0.reg, HAL_UART_EVENT_RXDRDY))
     {
-        
         hal_uart_event_clear(m_drv_uart0.reg, HAL_UART_EVENT_RXDRDY);
-        m_drv_uart0.cfg.func(DRV_UART_EVENT_RX_DONE, NULL);
+        if (m_drv_uart0.cfg.func != NULL)
+        {
+            m_drv_uart0.cfg.func(DRV_UART_EVENT_RX_DONE, NULL);
+        }
     }
 
     if (hal_uart_event_check(m_drv_uart0.reg, HAL_UART_EVENT_TXDRDY))
     {
-        drv_uart_tx_flag_done = 0;
         hal_uart_event_clear(m_drv_uart0.reg, HAL_UART_EVENT_TXDRDY);
-        m_drv_uart0.cfg.func(DRV_UART_EVENT_TX_DONE, NULL);
+        if (m_drv_uart0.cfg.func != NULL)
+        {
+            m_drv_uart0.cfg.func(DRV_UART_EVENT_TX_DONE, NULL);
+        }
+        
+        if (!((drv_uart_ring_buffer.tail&DRV_UART_BUFEER_MASK) == (drv_uart_ring_buffer.head&DRV_UART_BUFEER_MASK)))
+        {
+            hal_uart_txd_set(m_drv_uart0.reg, drv_uart_ring_buffer.data[drv_uart_ring_buffer.tail]);
+            drv_uart_ring_buffer.tail++;
+        }
+        else
+        {
+            hal_uart_int_disable(m_drv_uart0.reg, HAL_UART_INT_MASK_TXDRDY);
+            hal_uart_task_trigger(m_drv_uart0.reg, HAL_UART_TASK_STOPTX);
+        }
     }
-
     return DRV_STA_OK;
 }

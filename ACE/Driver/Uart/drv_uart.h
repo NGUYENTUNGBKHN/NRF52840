@@ -113,12 +113,23 @@ typedef struct
     | ((pin) << DRV_UART_PSEL_PIN_POS)\
     | ((port) << DRV_UART_PSEL_PORT_POS))\
 
+#define DRV_UART_BUFFER_MAX 256
+#define DRV_UART_BUFEER_MASK (DRV_UART_BUFFER_MAX - 1)
+typedef struct 
+{
+    uint8_t data[DRV_UART_BUFFER_MAX];
+    uint32_t head;
+    uint32_t tail;
+}drv_uart_ring_buffer_t;
+
+
 
 extern drv_sta_t drv_uart_init(uint8_t index);
 extern drv_sta_t drv_uart_deinit();
 extern drv_sta_t drv_uart_config(drv_uart_handler_t func);
-extern drv_sta_t drv_uart_send_data_byte(uint8_t data);
-extern drv_sta_t drv_uart_received(uint8_t *data);
+extern drv_sta_t drv_uart_send_data(uint8_t *data, uint16_t len);
+extern drv_sta_t drv_uart_received_polling(uint8_t *data, uint32_t len);
+extern drv_sta_t drv_uart_send_data_it(uint8_t *data, uint16_t len);
 
 #ifdef __cplusplus
 }

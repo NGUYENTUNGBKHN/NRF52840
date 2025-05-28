@@ -58,21 +58,37 @@ void clock_handler(drv_clock_evt_type_t event)
     }
 }
 
-
+void uart_handler(drv_uart_event evt, void *p_context)
+{
+    
+    switch (evt)
+    {
+    case DRV_UART_EVENT_TX_DONE:
+        // ace_trace_log("tx done\n");
+        break;
+    case DRV_UART_EVENT_RX_DONE:
+        // ace_trace_log("rx done\n");
+        break;
+    default:
+        break;
+    }
+}
 
 void bootloader()
 {
     static uint8_t channel = 0;
-    uint8_t data;
+    uint8_t data_rev;
+    uint8_t data[5] = {0x31, 0x32, 0x33, 0x34, 0x35};
     ace_trace_log("Bootloader start\n");
-    logInit();
+    // logInit();
+    
     while (1)
     {
         /* code */
         // Use directly __WFE and __SEV macros since the SoftDevice is not available.
-        logPrintf("hello \n");
-
-        delay(1000000);
+        // logPrintf("hello \n");
+       
+        // delay(1000000);
         // Wait for event.
         // __WFE();
     }

@@ -76,17 +76,17 @@ typedef struct
     drv_uarte_handler_t func;
 }drv_uarte_config_t;
 
-typedef struct drv_uarte_t;
-typedef struct DRV_UARTE_S 
+typedef struct DRV_UART_S drv_uarte_t;
+struct DRV_UART_S
 {
     /* data */
-    NRF_UART_Type *reg;
+    NRF_UARTE_Type *reg;
     uint8_t drv_index;
     drv_uarte_config_t cfg;
     drv_sta_t (*drv_uarte_config)(drv_uarte_t *self, drv_uarte_handler_t drv_uarte_handler);
-    drv_sta_t (*drv_uarte_send_data_bytes)(drv_uarte_t *self, uint8_t data, uint32_t len);
+    drv_sta_t (*drv_uarte_send_data_bytes)(drv_uarte_t *self, uint8_t *data, uint32_t len);
     drv_sta_t (*drv_uarte_received)(drv_uarte_t *self, uint8_t *data);
-}drv_uarte_t;
+};
 
 #define DRV_UARTE_INSTANCE0                                                      \
 {                                                                               \

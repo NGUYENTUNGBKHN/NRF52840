@@ -10,6 +10,8 @@
     Japan CashMachine Co, Limited. All rights reserved.
 ******************************************************************************/
 #include "drv_uarte.h"
+#include "hal_uarte.h"
+#include <stdlib.h>
 
 #define RX0_PIN_NUMBER 8
 #define TX0_PIN_NUMBER 6
@@ -27,7 +29,7 @@ static uint8_t drv_uart_intialized[2] = {0};
 
 drv_sta_t drv_uarte_init(drv_uarte_t* const self,
                         drv_sta_t (*drv_uarte_config)(drv_uarte_t *self, drv_uarte_handler_t drv_uarte_handler),
-                        drv_sta_t (*drv_uarte_send_data_bytes)(drv_uarte_t *self, uint8_t data, uint32_t len),
+                        drv_sta_t (*drv_uarte_send_data_bytes)(drv_uarte_t *self, uint8_t *data, uint32_t len),
                         drv_sta_t (*drv_uarte_received)(drv_uarte_t *self, uint8_t *data))
 {
     if (self == NULL || drv_uarte_config == NULL || drv_uarte_send_data_bytes == NULL || drv_uarte_received == NULL)
@@ -84,7 +86,7 @@ drv_sta_t drv_uarte_config(drv_uarte_t* const self, drv_uarte_handler_t drv_uart
     hal_uarte_int_enable(self->reg, HAL_UARTE_INT_RXDRDY_MASK);
     hal_uarte_task_trigger(self->reg, HAL_UARTE_TASK_STARTTX);
     hal_uarte_task_trigger(self->reg, HAL_UARTE_TASK_STARTRX);
-    drv_uarte_irq_enable();
+    // drv_uarte_irq_enable();
 
     return DRV_STA_OK;
 }
@@ -114,7 +116,7 @@ drv_uarte_t *drv_uarte_create(uint8_t index)
 
     if (index > 1)
     {
-        return DRV_STA_NG;
+        return NULL;
     }
 
     drv_uarte_t *drv_uarte = malloc(sizeof(drv_uarte_t));
