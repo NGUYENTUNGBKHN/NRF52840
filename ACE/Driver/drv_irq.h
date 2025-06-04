@@ -18,13 +18,15 @@ extern "C"
 
 /* CODE */
 
-
+// SYSTICK
+#define drv_systick_handler         SysTick_Handler
 // POWER_CLOCK_IRQn
 #define drv_power_clock_irq_handler    POWER_CLOCK_IRQHandler
 // RADIO 
 #define drv_radio_irq_handler          RADIO_IRQHandler
 // UART
 #define drv_uart_irq_handler            UARTE0_UART0_IRQHandler
+// #define drv_uarte_irq_handler           UARTE0_UART0_IRQHandler
 // UARTE
 
 #ifdef __cplusplus

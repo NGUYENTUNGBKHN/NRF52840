@@ -27,6 +27,7 @@ extern "C"
 #include "drv_clock.h"
 #include "drv_radio.h"
 #include "drv_uart.h"
+#include "drv_uarte.h"
 
 #ifdef __cplusplus
 }

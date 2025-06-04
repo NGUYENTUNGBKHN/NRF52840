@@ -84,28 +84,31 @@ struct DRV_UART_S
     uint8_t drv_index;
     drv_uarte_config_t cfg;
     drv_sta_t (*drv_uarte_config)(drv_uarte_t *self, drv_uarte_handler_t drv_uarte_handler);
-    drv_sta_t (*drv_uarte_send_data_bytes)(drv_uarte_t *self, uint8_t *data, uint32_t len);
+    drv_sta_t (*drv_uarte_send_data)(drv_uarte_t *self, uint8_t *data, uint32_t len);
+    drv_sta_t (*drv_uarte_send_data_it)(drv_uarte_t *self, uint8_t *data, uint32_t len);
     drv_sta_t (*drv_uarte_received)(drv_uarte_t *self, uint8_t *data);
 };
 
-#define DRV_UARTE_INSTANCE0                                                      \
+#define DRV_UARTE_INSTANCE0                                                     \
 {                                                                               \
-    .reg                = NRF_UARTE0,                                            \
+    .reg                = NRF_UARTE0,                                           \
     .drv_index          = 0,                                                    \
-    .cfg                = DRV_UARTE_DEFAULT_CONFIG,           \
-    .drv_uarte_config = NULL,                                                  \
-    .drv_uarte_send_data_bytes = NULL,                                         \
-    .drv_uarte_received = NULL,                                                \
+    .cfg                = DRV_UARTE_DEFAULT_CONFIG,                             \
+    .drv_uarte_config = NULL,                                                   \
+    .drv_uarte_send_data_it = NULL,                                             \
+    .drv_uarte_send_data = NULL,                                                \
+    .drv_uarte_received = NULL,                                                 \
 }
 
-#define DRV_UARTE_INSTANCE1                                                      \
+#define DRV_UARTE_INSTANCE1                                                     \
 {                                                                               \
-    .reg                = NRF_UARTE1,                                            \
+    .reg                = NRF_UARTE1,                                           \
     .drv_index          = 1,                                                    \
-    .cfg                = DRV_UARTE_DEFAULT_CONFIG,           \
-    .drv_uarte_config = NULL,                                                  \
-    .drv_uarte_send_data_bytes = NULL,                                         \
-    .drv_uarte_received = NULL,                                                \
+    .cfg                = DRV_UARTE_DEFAULT_CONFIG,                             \
+    .drv_uarte_config = NULL,                                                   \
+    .drv_uarte_send_data_it = NULL,                                             \
+    .drv_uarte_send_data = NULL,                                                \
+    .drv_uarte_received = NULL,                                                 \
 }
 
 #define DRV_UARTE_DEFAULT_CONFIG                                                     \
@@ -134,6 +137,9 @@ struct DRV_UART_S
     ( (DRV_UARTE_PSEL_CONNECT)\
     | ((pin) << DRV_UARTE_PSEL_PIN_POS)\
     | ((port) << DRV_UARTE_PSEL_PORT_POS))\
+
+extern drv_uarte_t *drv_uarte_create(uint8_t index);
+
 
 #ifdef __cplusplus
 }

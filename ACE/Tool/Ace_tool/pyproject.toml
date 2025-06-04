@@ -1,0 +1,13 @@
+[build-system]
+requires = ["setuptools", "wheel"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "ace_tool"
+version = "0.1.0"
+description = "A useful Python tool"
+authors = [{name = "nguyen-thanh-tung", email = "nguyenthanhtung8196@gmail.com"}]
+dependencies = []
+
+[project.scripts]
+ace_tool = "myflasher.cli:main"

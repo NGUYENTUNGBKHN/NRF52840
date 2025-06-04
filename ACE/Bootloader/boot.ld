@@ -9,6 +9,9 @@ ENTRY(Reset_Handler)
 
 _estack = ORIGIN(RAM) + LENGTH(RAM);
 
+_Min_Heap_Size = 0x200; /* required amount of heap */
+_Min_Stack_Size = 0x400; /* required amount of stack */
+
 MEMORY
 {
     FLASH(rx) : ORIGIN = 0x00, LENGTH = 0x9FFFF
@@ -89,6 +92,16 @@ SECTIONS
         _eram_code = .;
     } > RAM AT> FLASH_TRACE
     /* Remove information from the compiler libraries */
+
+    ._user_heap_stack :
+    {
+        . = ALIGN(8);
+        PROVIDE ( end = . );
+        PROVIDE ( _end = . );
+        . = . + _Min_Heap_Size;
+        . = . + _Min_Stack_Size;
+        . = ALIGN(8);
+    } >RAM
     /DISCARD/ :
     {
         /* libc.a ( * )

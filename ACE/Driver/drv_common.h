@@ -23,6 +23,7 @@ extern "C"
 #include "hal_uarte.h"
 #include "hal_clock.h"
 #include "hal_radio.h"
+#include "hal_systick.h"
 
 #define DRV_PERIPHERAL_ID_GET(base_addr)  (uint8_t)((uint32_t)(base_addr) >> 12)
 
