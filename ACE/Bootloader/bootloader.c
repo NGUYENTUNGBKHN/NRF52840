@@ -79,20 +79,21 @@ void bootloader()
 {
     static uint8_t channel = 0;
     uint8_t data_rev;
-    uint8_t data[5] = {0x31, 0x32, 0x33, 0x34, 0x35};
+    uint8_t data[] = "xin chao\n";
+    uint8_t abc[] = "begin\n";
     uint8_t time = 0x31;
     ace_trace_log("Bootloader start\n");
     drv_systick_init(0);
     drv_uarte_t *test = drv_uarte_create(0);
     test->drv_uarte_config(test, NULL);
     // logInit();
-    
+    test->drv_uarte_send_data(test, abc, sizeof(abc));
     while (1)
     {
         /* code */
         // Use directly __WFE and __SEV macros since the SoftDevice is not available.
         // logPrintf("hello \n");
-        test->drv_uarte_send_data(test, data, 5);
+        test->drv_uarte_send_data(test, data, sizeof(data));
         drv_systick_delay_ms(1000);
         // Wait for event.
         // __WFE();

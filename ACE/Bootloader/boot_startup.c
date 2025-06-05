@@ -1,6 +1,5 @@
 #include <stdint.h>
 
-
 extern uint32_t _estack;
 extern int main();
 
@@ -17,7 +16,7 @@ extern uint32_t _ebss;
 extern uint32_t _sram_code;
 extern uint32_t _eram_code; 
 extern uint32_t _ramcode_load_start;
-
+extern void system_init();
 
 void Reset_Handler()
 {
@@ -51,7 +50,7 @@ void Reset_Handler()
 
     /* Jump to __libc_init_array */
     // __libc_init_array();
-    
+    system_init();
     main();
 }
 
