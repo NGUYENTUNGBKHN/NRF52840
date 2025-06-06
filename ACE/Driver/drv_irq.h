@@ -25,8 +25,8 @@ extern "C"
 // RADIO 
 #define drv_radio_irq_handler          RADIO_IRQHandler
 // UART
-#define drv_uart_irq_handler            UARTE0_UART0_IRQHandler
-// #define drv_uarte_irq_handler           UARTE0_UART0_IRQHandler
+// #define drv_uart_irq_handler            UARTE0_UART0_IRQHandler
+#define drv_uarte_irq_handler           UARTE0_UART0_IRQHandler
 // UARTE
 
 #ifdef __cplusplus

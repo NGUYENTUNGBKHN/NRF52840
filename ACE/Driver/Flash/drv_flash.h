@@ -1,42 +1,27 @@
-
 /******************************************************************************/
 /*! @addtogroup Group2
-    @file       memory_map.h
+    @file       drv_flash.h
     @brief      
-    @date       2024/11/20
+    @date       2025/06/06
     @author     Development Dept at Tokyo (nguyen-thanh-tung@jcm-hq.co.jp)
     @par        Revision
     $Id$
     @par        Copyright (C)
     Japan CashMachine Co, Limited. All rights reserved.
 ******************************************************************************/
-
-#ifndef _MEMORY_MAP_H_
-#define _MEMORY_MAP_H_
+#ifndef _DRV_FLASH_H_
+#define _DRV_FLASH_H_
 #ifdef __cplusplus
 extern "C"
 {
 #endif
 
-
 /* CODE */
-
-/* Bootloader memory area */
-#define ADDR_BOOT_BEGIN     0x00000000
-#define ADDR_BOOT_END       0x00010000
-
-/* Application memory area */
-#define ADDR_APP_SECTION    0x00020000
-#define ADDR_APP_BEGIN      0x00020000
-#define ADDR_APP_END        0x0003E000
+#include <stdint.h>
+#include "hal_nvmc.h"
 
 #ifdef __cplusplus
 }
 #endif
 #endif
-
-
-
-
-
 

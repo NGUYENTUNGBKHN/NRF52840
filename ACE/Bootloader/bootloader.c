@@ -12,6 +12,7 @@
 
 #include "bootloader.h"
 #include "log/log.h"
+#include "download/download.h"
 #include "drv_systick.h"
 
 void delay(uint32_t count)
@@ -77,24 +78,16 @@ void uart_handler(drv_uart_event evt, void *p_context)
 
 void bootloader()
 {
-    static uint8_t channel = 0;
-    uint8_t data_rev;
-    uint8_t data[] = "xin chao\n";
-    uint8_t abc[] = "begin\n";
-    uint8_t time = 0x31;
     ace_trace_log("Bootloader start\n");
     drv_systick_init(0);
-    drv_uarte_t *test = drv_uarte_create(0);
-    test->drv_uarte_config(test, NULL);
-    // logInit();
-    test->drv_uarte_send_data(test, abc, sizeof(abc));
+    // download_init();
     while (1)
     {
         /* code */
         // Use directly __WFE and __SEV macros since the SoftDevice is not available.
         // logPrintf("hello \n");
-        test->drv_uarte_send_data(test, data, sizeof(data));
-        drv_systick_delay_ms(1000);
+        // test->drv_uarte_send_data(test, data, sizeof(data));
+        // drv_systick_delay_ms(1000);
         // Wait for event.
         // __WFE();
     }

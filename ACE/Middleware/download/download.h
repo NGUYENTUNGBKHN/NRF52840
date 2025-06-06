@@ -1,42 +1,29 @@
-
 /******************************************************************************/
 /*! @addtogroup Group2
-    @file       memory_map.h
+    @file       download.h
     @brief      
-    @date       2024/11/20
+    @date       2025/06/06
     @author     Development Dept at Tokyo (nguyen-thanh-tung@jcm-hq.co.jp)
     @par        Revision
     $Id$
     @par        Copyright (C)
     Japan CashMachine Co, Limited. All rights reserved.
 ******************************************************************************/
-
-#ifndef _MEMORY_MAP_H_
-#define _MEMORY_MAP_H_
+#ifndef _DOWNLOAD_H_
+#define _DOWNLOAD_H_
 #ifdef __cplusplus
 extern "C"
 {
 #endif
 
-
 /* CODE */
+#include "memory/memory_map.h"
 
-/* Bootloader memory area */
-#define ADDR_BOOT_BEGIN     0x00000000
-#define ADDR_BOOT_END       0x00010000
+extern void download_init();
 
-/* Application memory area */
-#define ADDR_APP_SECTION    0x00020000
-#define ADDR_APP_BEGIN      0x00020000
-#define ADDR_APP_END        0x0003E000
+
 
 #ifdef __cplusplus
 }
 #endif
 #endif
-
-
-
-
-
-

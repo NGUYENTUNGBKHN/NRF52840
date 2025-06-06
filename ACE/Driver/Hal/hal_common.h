@@ -22,6 +22,17 @@ extern "C"
 #include "stdbool.h"
 #include "stddef.h"
 
+/**
+ * @brief Macro for getting the offset (in bytes) from the beginning of a structure
+ *        of the specified type to its specified member.
+ *
+ * @param[in] type   Structure type.
+ * @param[in] member Structure member whose offset is searched for.
+ *
+ * @return Member offset in bytes.
+ */
+#define HAL_OFFSETOF(type, member)  ((size_t)&(((type *)0)->member))
+
 #ifdef __cplusplus
 }
 #endif

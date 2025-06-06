@@ -27,7 +27,8 @@
 #define PORT1 1
 
 static uint8_t drv_uart_intialized[2] = {0};
-
+static drv_uarte_handler_t drv_main_uarte_handler[2] = {NULL};
+static uint8_t drv_uart_data_recv;
 
 static void drv_uarte_irq_enable(NRF_UARTE_Type *type)
 {
@@ -51,11 +52,13 @@ static void drv_uarte_irq_enable(NRF_UARTE_Type *type)
 
 drv_sta_t drv_uarte_init(drv_uarte_t* const self,
                         drv_sta_t (*drv_uarte_config)(drv_uarte_t *self, drv_uarte_handler_t drv_uarte_handler),
-                        drv_sta_t (*drv_uarte_send_data_it)(drv_uarte_t *self, uint8_t *data, uint32_t len),
                         drv_sta_t (*drv_uarte_send_data)(drv_uarte_t *self, uint8_t *data, uint32_t len),
-                        drv_sta_t (*drv_uarte_received)(drv_uarte_t *self, uint8_t *data))
+                        drv_sta_t (*drv_uarte_received)(drv_uarte_t *self, uint8_t loop))
 {
-    if (self == NULL || drv_uarte_config == NULL || drv_uarte_send_data == NULL || drv_uarte_received == NULL || drv_uarte_send_data_it == NULL)
+    if (self == NULL || 
+        drv_uarte_config == NULL || 
+        drv_uarte_send_data == NULL || 
+        drv_uarte_received == NULL)
     {
         return DRV_STA_NG;
     }
@@ -76,7 +79,6 @@ drv_sta_t drv_uarte_init(drv_uarte_t* const self,
     self->drv_uarte_config = drv_uarte_config;
     self->drv_uarte_send_data = drv_uarte_send_data;
     self->drv_uarte_received = drv_uarte_received;
-    self->drv_uarte_send_data_it = drv_uarte_send_data_it;
     drv_uart_intialized[self->drv_index] = 1;
     return DRV_STA_OK; 
 }
@@ -88,6 +90,7 @@ drv_sta_t drv_uarte_config(drv_uarte_t* const self, drv_uarte_handler_t drv_uart
         return DRV_STA_NG;
     }
     self->cfg.func = drv_uarte_handler;
+    drv_main_uarte_handler[self->drv_index] = drv_uarte_handler;
     if (self->drv_index == 0)
     {
         self->cfg.rdx_pin = DRV_UARTE_PSEL_SETUP(PORT0, RX0_PIN_NUMBER);
@@ -113,31 +116,20 @@ drv_sta_t drv_uarte_config(drv_uarte_t* const self, drv_uarte_handler_t drv_uart
     return DRV_STA_OK;
 }
 
-drv_sta_t drv_uarte_send_data_it(drv_uarte_t* const self, uint8_t *data, uint32_t len)
-{
-    
-    if (self == NULL || data == NULL)
-    {
-        return DRV_STA_NG;
-    }
-    if (self->cfg.func == NULL && !hal_uarte_int_enable_check(self->reg, HAL_UARTE_INT_TXDRDY_MASK))
-    {
-        return DRV_STA_NG;
-    }
-    hal_uarte_tx_buffer_set(self->reg, data, len);
-    /* Trigger tx */
-    hal_uarte_task_trigger(self->reg, HAL_UARTE_TASK_STARTTX);
-
-    return DRV_STA_OK;
-}
-
 drv_sta_t drv_uarte_send_data(drv_uarte_t* const self, uint8_t *data, uint32_t len)
 {
     if (self == NULL || data == NULL)
     {
         return DRV_STA_NG;
     }
-    if (self->cfg.func == NULL && !hal_uarte_int_enable_check(self->reg, HAL_UARTE_INT_TXDRDY_MASK))
+
+    // if(drv_is_in_ram(data))
+    // {
+    //     return DRV_STA_NG;
+    // }
+
+    /* Interrupt not use */
+    if (!hal_uarte_int_enable_check(self->reg, HAL_UARTE_INT_ENDTX_MASK))
     {
         hal_uarte_tx_buffer_set(self->reg, data, len);
         /* Trigger tx */
@@ -151,16 +143,31 @@ drv_sta_t drv_uarte_send_data(drv_uarte_t* const self, uint8_t *data, uint32_t l
         /* Stop tx */
         hal_uarte_task_trigger(self->reg, HAL_UARTE_TASK_STOPTX);
     }
+    /* Interrupt useage */
+    else if (hal_uarte_int_enable_check(self->reg, HAL_UARTE_INT_ENDTX_MASK))
+    {
+
+    }
 
     return DRV_STA_OK;
 }
 
-drv_sta_t drv_uarte_received(drv_uarte_t* const self, uint8_t *data)
+drv_sta_t drv_uarte_received(drv_uarte_t* const self, uint8_t loop)
 {
     if (self == NULL)
     {
         return DRV_STA_NG;
     }
+
+    hal_uarte_rx_buffer_set(self->reg, &drv_uart_data_recv, 1);
+    // hal_uarte_rx_buffer_set();
+    hal_uarte_int_enable(self->reg, HAL_UARTE_INT_ENDRX_MASK);
+    /* Start RX */
+    hal_uarte_task_trigger(self->reg, HAL_UARTE_TASK_STARTRX);
+    /* Short */
+    hal_uarte_shorts_enable(self->reg, HAL_UARTE_SHORT_ENDRX_STARTRX);
+
+
     return DRV_STA_OK;
 }
 
@@ -183,7 +190,6 @@ drv_uarte_t *drv_uarte_create(uint8_t index)
     drv_uarte->drv_index = index;
     sta = drv_uarte_init(drv_uarte,
                     drv_uarte_config,
-                    drv_uarte_send_data_it,
                     drv_uarte_send_data,
                     drv_uarte_received);
     if (sta != DRV_STA_OK)
@@ -204,8 +210,21 @@ drv_sta_t drv_uarte_irq_handler()
         {
             hal_uarte_event_clear(NRF_UARTE0, HAL_UARTE_EVENT_ENDTX);
         }
+        if (hal_uarte_event_check(NRF_UARTE0, HAL_UARTE_EVENT_ENDRX))
+        {
+            hal_uarte_event_clear(NRF_UARTE0, HAL_UARTE_EVENT_ENDRX);
+            if (drv_main_uarte_handler[0] != NULL)
+            {
+                if(hal_uarte_rx_amount_get(NRF_UARTE0))
+                {
+                    // hal_uarte_rx_buffer_set
+                    drv_main_uarte_handler[0](DRV_UARTE_EVENT_RX_DONE, &drv_uart_data_recv);
+                }
+            }
+            
+        }
     }
-    else if (drv_uart_intialized[1])
+    if (drv_uart_intialized[1])
     {
         if (hal_uarte_event_check(NRF_UARTE1, HAL_UARTE_EVENT_ENDTX))
         {

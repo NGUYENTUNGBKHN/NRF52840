@@ -85,8 +85,7 @@ struct DRV_UART_S
     drv_uarte_config_t cfg;
     drv_sta_t (*drv_uarte_config)(drv_uarte_t *self, drv_uarte_handler_t drv_uarte_handler);
     drv_sta_t (*drv_uarte_send_data)(drv_uarte_t *self, uint8_t *data, uint32_t len);
-    drv_sta_t (*drv_uarte_send_data_it)(drv_uarte_t *self, uint8_t *data, uint32_t len);
-    drv_sta_t (*drv_uarte_received)(drv_uarte_t *self, uint8_t *data);
+    drv_sta_t (*drv_uarte_received)(drv_uarte_t *self, uint8_t loop);
 };
 
 #define DRV_UARTE_INSTANCE0                                                     \
@@ -95,7 +94,6 @@ struct DRV_UART_S
     .drv_index          = 0,                                                    \
     .cfg                = DRV_UARTE_DEFAULT_CONFIG,                             \
     .drv_uarte_config = NULL,                                                   \
-    .drv_uarte_send_data_it = NULL,                                             \
     .drv_uarte_send_data = NULL,                                                \
     .drv_uarte_received = NULL,                                                 \
 }
@@ -106,7 +104,6 @@ struct DRV_UART_S
     .drv_index          = 1,                                                    \
     .cfg                = DRV_UARTE_DEFAULT_CONFIG,                             \
     .drv_uarte_config = NULL,                                                   \
-    .drv_uarte_send_data_it = NULL,                                             \
     .drv_uarte_send_data = NULL,                                                \
     .drv_uarte_received = NULL,                                                 \
 }

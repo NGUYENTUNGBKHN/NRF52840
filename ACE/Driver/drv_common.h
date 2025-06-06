@@ -80,7 +80,10 @@ static inline bool _DRV_IRQ_IS_ENABLED(IRQn_Type irq_number)
     return 0 != (NVIC->ISER[irq_number / 32] & (1UL << (irq_number % 32)));
 }
 
-
+__STATIC_INLINE bool drv_is_in_ram(void const * p_object)
+{
+    return ((((uint32_t)p_object) & 0xE0000000u) == 0x20000000u);
+}
 
 
 typedef enum DRV_STA_s
