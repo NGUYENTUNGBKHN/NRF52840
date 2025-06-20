@@ -1,0 +1,152 @@
+                      Release note of ThreadX-uITRON library
+                                                             Grape Systems Inc.
+
+Release note
+-------------------------------------------------------------------------------
+2006/08/31 Initial version 2.0
+-------------------------------------------------------------------------------
+2007/03/05 version 2.1
+
+itron.h
+txi_data.h
+    Prototype declaration was added.
+
+_txi_exc_handler_entry:
+    The processing which clears _kernel_loc_cpu
+    and _tx_thread_preempt_disable was added at
+    the time of the end of handler processing.
+
+_txi_inh_handler_entry:
+    The processing which clears _kernel_loc_cpu
+    and _tx_thread_preempt_disable was added at
+    the time of the end of handler processing.
+
+iloc_cpu:
+    Lock processing was changed.
+
+loc_cpu:
+    TX_RESTORE is deleted.
+
+iunl_cpu
+    The processing which checks lock status was added.
+
+-------------------------------------------------------------------------------
+2009/07/10 version 2.2
+
+txi_syst.c
+loc_cpu.c
+    TX_INTERRUPT_SAVE_AREA and TX_DISABLE which do not have a meaning in using it were deleted.
+
+acre_alm.c
+acre_cyc.c
+acre_dtq.c
+acre_flg.c
+acre_mbf.c
+acre_mbx.c
+acre_mpf.c
+acre_mpl.c
+acre_mtx.c
+acre_por.c
+acre_sem.c
+cre_alm.c
+cre_dtq.c
+cre_flg.c
+cre_mbx.c
+cre_mpf.c
+cre_mpl.c
+cre_mtx.c
+cre_por.c
+cre_sem.c
+cre_tsk.c
+cre_mbf.c
+_kernel_release_mutex
+trcv_dtq.c
+tsnd_dtq.c
+_kernel_task_cleanup
+_kernel_suspend_by_api
+_kernel_resume_task
+rpl_rdv.c
+sig_sem.c
+snd_mbx.c
+fsnd_dtq.c
+rel_mpl.c
+rel_wai.c
+irel_wai.c
+iwup_tsk.c
+rel_mpf.c
+fwd_por.c
+    The preemption control method was arranged.
+
+chg_pri.c
+act_tsk.c
+ter_tsk.c
+frsm_tsk.c
+rsm_tsk.c
+set_tim.c
+sta_alm.c
+sta_cyc.c
+stp_alm.c
+stp_cyc.c
+del_tsk.c
+sta_tsk.c
+get_tim.c
+wup_tsk.c
+_kernel_task_entry
+del_dtq.c
+trcv_mbf.c
+del_mpf.c
+del_sem.c
+del_mpl.c
+del_mtx.c
+del_por.c
+del_flg.c
+del_mbf.c
+del_mbx.c
+    Before using ThreadX API, it changed so that interruption might be enabled.
+
+def_exc.c
+def_inh.c
+    It changed so that handler number might be received from 0.
+    Recovery processing was corrected so that it could change by a macro definition.
+
+sns_tex.c
+ref_tsk.c
+ref_tst.c
+get_tid.c
+iget_tid.c
+ena_tex.c
+dis_tex.c
+txi_knl.h
+_kernel_task_tcb
+ras_tex
+    Current task information is acquired directly.
+
+tslp_tsk.c
+sus_tsk.c
+rot_rdq.c
+slp_tsk.c
+ext_tsk.c
+dly_tsk.c
+exd_tsk.c
+unl_mtx.c
+twai_flg.c
+trcv_mbx.c
+tloc_mtx.c
+tget_mpf.c
+tget_mpl.c
+tacp_por.c
+tsnd_mbf.c
+tcal_por.c
+    Current task information is acquired directly.
+    Before using ThreadX API, it changed so that interruption might be enabled.
+
+__kernel_copy_to_mbf
+__kernel_copy_from_mbf
+_kernel_enque_task_pri
+    The data type was corrected.
+
+_kernel_task_exception_entry
+    Current task information is acquired directly.
+    Before calling a scheduler, the processing which clears a current task was added.
+
+-------------------------------------------------------------------------------
