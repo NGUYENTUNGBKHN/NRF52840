@@ -22,6 +22,24 @@ extern "C"
 #include "stdbool.h"
 #include "stddef.h"
 
+
+/* TIMER */
+#define TIMER_COUNT 5
+
+#define TIMER0_MAX_SIZE 32
+#define TIMER1_MAX_SIZE 32
+#define TIMER2_MAX_SIZE 32
+#define TIMER3_MAX_SIZE 32
+#define TIMER4_MAX_SIZE 32
+
+#define TIMER0_CC_NUM 4
+#define TIMER1_CC_NUM 4
+#define TIMER2_CC_NUM 4
+#define TIMER3_CC_NUM 6
+#define TIMER4_CC_NUM 6
+
+
+
 /**
  * @brief Macro for getting the offset (in bytes) from the beginning of a structure
  *        of the specified type to its specified member.
