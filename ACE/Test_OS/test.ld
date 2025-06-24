@@ -15,8 +15,10 @@ SECTIONS
     KEEP(*(.vectors .vectors.*))
   } > FLASH
 
+	__text_load_start__ = .;
 	.text :
 	{
+		__text_start__ = .;
 		*(.text*)
 
 		KEEP(*(.init))
@@ -26,6 +28,7 @@ SECTIONS
 		*crtbegin.o(.ctors)
 		*crtbegin?.o(.ctors)
 		*(EXCLUDE_FILE(*crtend?.o *crtend.o) .ctors)
+	__ctors_load_start__ = .;
     __ctors_start__ = ALIGN(4);
 		*(SORT(.ctors.*))
 		*(.ctors)
@@ -35,6 +38,7 @@ SECTIONS
  		*crtbegin.o(.dtors)
  		*crtbegin?.o(.dtors)
  		*(EXCLUDE_FILE(*crtend?.o *crtend.o) .dtors)
+	__dtors_load_start__ = .;
     __dtors_start__ = ALIGN(4);
  		*(SORT(.dtors.*))
  		*(.dtors)
@@ -44,6 +48,7 @@ SECTIONS
 
 		KEEP(*(.eh_frame*))
 	} > FLASH
+	__text_end__ = __text_start__ + SIZEOF(.text);
 
 	.ARM.extab : 
 	{

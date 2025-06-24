@@ -1,0 +1,65 @@
+TARGET_NAME=uitron
+BUILD_DIR=_build
+OBJ_DIR=$(BUILD_DIR)/obj
+LIB_OUTPUT_PATH = $(BUILD_DIR)/$(TARGET_NAME).a
+
+PROJ_DIR=./
+THREADX_LIB_DIR=./../ThreadX/
+
+# TOOLCHAIN
+CAR=arm-none-eabi-ar
+CC=arm-none-eabi-gcc
+
+# CFLAG
+
+CPU=-mcpu=cortex-m4 -mthumb -mabi=aapcs
+FPU=-mfloat-abi=hard -mfpu=fpv4-sp-d16
+OPT=-O3 -g3
+CFLAG+= $(CPU) $(FPU) $(FLOAT)
+
+SRC_EXCLUDE=\
+
+SRC_INCLUDE+=$(wildcard $(PROJ_DIR)/src/*.c)
+
+SRC_FILES:=$(filter-out $(SRC_EXCLUDE), $(SRC_INCLUDE))
+
+INC_FOLDERS=\
+	$(PROJ_DIR)/inc\
+	$(THREADX_LIB_DIR)/common/inc\
+	$(THREADX_LIB_DIR)/port/cortex-m4/inc\
+
+
+
+OBJ_FILES:=$(foreach obj_file, $(SRC_FILES), $(OBJ_DIR)/$(obj_file).o)
+# OBJ_FILES = $(patsubst %.c, $(OBJ_DIR)/%.o,$(SRC_FILES))
+# OBJ_FILES += $(patsubst %.S, $(OBJ_DIR)/%.S.o,$(SRC_FILES))
+
+# $(info $(OBJ_FILES))
+
+INC+=$(foreach inc, $(INC_FOLDERS), -I$(inc))
+
+.PHONY: all
+
+all: $(LIB_OUTPUT_PATH)
+
+$(OBJ_DIR)/%.c.o: %.c
+	@echo "Compiling $(notdir $<)"
+	@mkdir -p $(shell dirname $@)
+	@$(CC) $(CFLAG) $(INC) -c $< -o $@
+
+$(OBJ_DIR)/%.S.o: %.S
+	@echo "Compiling $(notdir $<)"
+	@mkdir -p $(shell dirname $@)
+	@$(CC) $(CFLAG) $(INC) -c $< -o $@
+
+
+$(LIB_OUTPUT_PATH): $(OBJ_FILES)
+	@echo "Compiling $(notdir $@)"
+	@mkdir -p $(shell dirname $@)
+	@$(CAR) -r $@ $(OBJ_FILES)  
+
+	
+clean: 
+	rm -r $(BUILD_DIR)
+
+

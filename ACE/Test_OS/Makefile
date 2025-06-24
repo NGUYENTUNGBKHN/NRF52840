@@ -34,6 +34,7 @@ LDFLAGS+=$(CPU) $(FPU) $(OPT)
 LDFLAGS+=-Wl,--gc-sections
 LDFLAGS+=--specs=nano.specs
 LDFLAGS+=-T$(LINKER_SCRIPT) -mthumb -mabi=aapcs
+LDFLAGS+=-nostartfiles -ereset_handler
 
 
 # SRC_FILES=\
@@ -43,7 +44,7 @@ LDFLAGS+=-T$(LINKER_SCRIPT) -mthumb -mabi=aapcs
 SRC_EXCLUDE=\
 
 SRC_INCLUDE+=$(wildcard *.c)
-SRC_INCLUDE+=$(wildcard *.s)
+SRC_INCLUDE+=$(wildcard *.S)
 
 # SRC_FILES+=$(wildcard $(OSKERNEL_DIR)/*.s)
 SRC_FILES:=$(filter-out $(SRC_EXCLUDE), $(SRC_INCLUDE))

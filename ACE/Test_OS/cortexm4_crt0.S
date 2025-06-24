@@ -22,10 +22,10 @@ _start:
   ldr r1, =__text_start__
   ldr r2, =__text_end__
   bl crt0_memory_copy
-  ldr r0, =__fast_load_start__
-  ldr r1, =__fast_start__
-  ldr r2, =__fast_end__
-  bl crt0_memory_copy
+  @ ldr r0, =__fast_load_start__
+  @ ldr r1, =__fast_start__
+  @ ldr r2, =__fast_end__
+  @ bl crt0_memory_copy
   ldr r0, =__ctors_load_start__
   ldr r1, =__ctors_start__
   ldr r2, =__ctors_end__
@@ -34,10 +34,10 @@ _start:
   ldr r1, =__dtors_start__
   ldr r2, =__dtors_end__
   bl crt0_memory_copy
-  ldr r0, =__rodata_load_start__
-  ldr r1, =__rodata_start__
-  ldr r2, =__rodata_end__
-  bl crt0_memory_copy
+  @ ldr r0, =__rodata_load_start__
+  @ ldr r1, =__rodata_start__
+  @ ldr r2, =__rodata_end__
+  @ bl crt0_memory_copy
 
 
   /* Zero bss. */
