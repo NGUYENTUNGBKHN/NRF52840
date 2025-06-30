@@ -19,7 +19,7 @@ Device "NRF52832_XXAA" selected.
 
 Connecting to target via SWD
 InitTarget() start
-InitTarget() end - Took 27.0ms
+InitTarget() end - Took 26.8ms
 Found SW-DP with ID 0x2BA01477
 DPv0 detected
 CoreSight SoC-400 or earlier
@@ -44,12 +44,12 @@ ROMTbl[0] @ E00FF000
 Memory zones:
   Zone: "Default" Description: Default access mode
 Cortex-M4 identified.
-PC = 00000366, CycleCnt = EEEF550E
-R0 = 00000014, R1 = 2001FF62, R2 = 0000000A, R3 = 00FD7881
-R4 = 03D09000, R5 = 00000E14, R6 = 00000E34, R7 = 00000014
-R8 = FFFFFFFD, R9 = 0000001A, R10= 2001FF65, R11= 0000000D
-R12= 0000000A
-SP(R13)= 2001FFE0, MSP= 2001F7C0, PSP= 2001FFE0, R14(LR) = 00000353
+PC = 00000402, CycleCnt = 5223838D
+R0 = 00000026, R1 = 20000D2B, R2 = 00000013, R3 = 00041471
+R4 = 0009C3FF, R5 = 00000000, R6 = 0000113C, R7 = 000010F8
+R8 = E8EC0041, R9 = 18F7DCDB, R10= 0A32A1CD, R11= FE130F43
+R12= E16568B9
+SP(R13)= 20000DA0, MSP= 2001FFF8, PSP= 20000DA0, R14(LR) = 000003F1
 XPSR = 01000000: APSR = nzcvq, EPSR = 01000000, IPSR = 000 (NoException)
 CFBP = 03000000, CONTROL = 03, FAULTMASK = 00, BASEPRI = 00, PRIMASK = 00
 
@@ -68,9 +68,7 @@ Reset type: NORMAL (https://wiki.segger.com/J-Link_Reset_Strategies)
 Reset: Halt core after reset via DEMCR.VC_CORERESET.
 Reset: Reset device via AIRCR.SYSRESETREQ.
 Downloading file [_build/ace_os.hex]...
-J-Link: Flash download: Bank 0 @ 0x00000000: 1 range affected (4096 bytes)
-J-Link: Flash download: Total: 0.349s (Prepare: 0.067s, Compare: 0.077s, Erase: 0.089s, Program & Verify: 0.079s, Restore: 0.035s)
-J-Link: Flash download: Program & Verify speed: 50 KB/s
+J-Link: Flash download: Bank 0 @ 0x00000000: Skipped. Contents already match
 O.K.
 J-Link>r
 Reset delay: 0 ms

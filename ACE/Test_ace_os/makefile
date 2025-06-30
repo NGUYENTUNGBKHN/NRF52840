@@ -41,6 +41,8 @@ LDFLAGS+=-T$(LINKER_SCRIPT) -mthumb -mabi=aapcs
 
 SRC_EXCLUDE=\
 	boot_startup.s\
+	context_swtich.s\
+	syscall.s\
 
 SRC_INCLUDE+=$(wildcard *.c)
 SRC_INCLUDE+=$(wildcard *.s)
