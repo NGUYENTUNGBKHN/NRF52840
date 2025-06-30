@@ -44,14 +44,14 @@ ROMTbl[0] @ E00FF000
 Memory zones:
   Zone: "Default" Description: Default access mode
 Cortex-M4 identified.
-PC = 000002B8, CycleCnt = 00125B81
-R0 = 200006DC, R1 = 200006E0, R2 = 000A0058, R3 = 200006E0
-R4 = 00000000, R5 = 00000000, R6 = 00000000, R7 = 00000000
+PC = 00000332, CycleCnt = 0033547E
+R0 = 00000022, R1 = 2001FB81, R2 = 00000011, R3 = 00000000
+R4 = 2001FF8C, R5 = 00000000, R6 = 00000000, R7 = 00000000
 R8 = 00000000, R9 = 00000000, R10= 00000000, R11= 00000000
-R12= 00000000
-SP(R13)= 2001FFD8, MSP= 2001FFD8, PSP= 00000000, R14(LR) = FFFFFFF9
-XPSR = 61000003: APSR = nZCvq, EPSR = 01000000, IPSR = 003 (HardFault)
-CFBP = 00000000, CONTROL = 00, FAULTMASK = 00, BASEPRI = 00, PRIMASK = 00
+R12= 6000000B
+SP(R13)= 2001FBF8, MSP= 2001FBF8, PSP= 2001FFB0, R14(LR) = 00000333
+XPSR = 6100000B: APSR = nZCvq, EPSR = 01000000, IPSR = 00B (SVCall)
+CFBP = 01000000, CONTROL = 01, FAULTMASK = 00, BASEPRI = 00, PRIMASK = 00
 
 FPS0 = 00000000, FPS1 = 00000000, FPS2 = 00000000, FPS3 = 00000000
 FPS4 = 00000000, FPS5 = 00000000, FPS6 = 00000000, FPS7 = 00000000
@@ -62,14 +62,14 @@ FPS20= 00000000, FPS21= 00000000, FPS22= 00000000, FPS23= 00000000
 FPS24= 00000000, FPS25= 00000000, FPS26= 00000000, FPS27= 00000000
 FPS28= 00000000, FPS29= 00000000, FPS30= 00000000, FPS31= 00000000
 FPSCR= 00000000
-J-Link>loadfile ./test/boot.hex
+J-Link>loadfile _build/ace_os.hex
 'loadfile': Performing implicit reset & halt of MCU.
 Reset type: NORMAL (https://wiki.segger.com/J-Link_Reset_Strategies)
 Reset: Halt core after reset via DEMCR.VC_CORERESET.
 Reset: Reset device via AIRCR.SYSRESETREQ.
-Downloading file [./test/boot.hex]...
+Downloading file [_build/ace_os.hex]...
 J-Link: Flash download: Bank 0 @ 0x00000000: Skipped. Contents already match
-Writing target memory failed.
+O.K.
 J-Link>r
 Reset delay: 0 ms
 Reset type: NORMAL (https://wiki.segger.com/J-Link_Reset_Strategies)
