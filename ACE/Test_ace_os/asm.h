@@ -18,6 +18,7 @@ extern "C"
 #include <stdint.h>
 /* CODE */
 extern uint32_t *activate(uint32_t *a);
+extern void task_init_evn(uint32_t *a);
 extern void syscall(void);
 
 
