@@ -9,6 +9,11 @@ sp : R13
 lr : R14
 pc : R15
 
+__attribute__((naked)) will be add with purpose is avoid compiler add prologue and epilogue
+
+
+
+
 
 
 
