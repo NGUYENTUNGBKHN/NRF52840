@@ -1,0 +1,74 @@
+{
+    // Use IntelliSense to learn about possible attributes.
+    // Hover to view descriptions of existing attributes.
+    // For more information, visit: https://go.microsoft.com/fwlink/?linkid=830387
+    "version": "0.2.0",
+    "configurations": [
+        {
+            "name": "Cortex Debug",
+            "cwd": "${workspaceFolder}",
+            "executable": "${workspaceFolder}/ACE/Bootloader/_build/boot.out",
+            "request": "launch",
+            "type": "cortex-debug",
+            "runToEntryPoint": "main",
+            "servertype": "jlink",
+            "serverpath": "C:/Program Files/SEGGER/JLink_V810c/JLinkGDBServerCL.exe",
+            "serverArgs": [],
+            "device": "NRF52840_XXAA",
+            "interface": "jtag",
+            "serialNumber": "", //If you have more than one J-Link probe, add the serial number here.
+            "svdFile": "${workspaceFolder}/svd/nrf52840.svd",
+            "armToolchainPath": "C:/gcc-arm-none-eabi/bin"
+        },
+        {
+            "name": "Test OS",
+            "cwd": "${workspaceFolder}",
+            "executable": "${workspaceFolder}/ACE/Test_OS/_build/test.out",
+            "request": "launch",
+            "type": "cortex-debug",
+            "runToEntryPoint": "main",
+            "servertype": "jlink",
+            "serverpath": "C:/Program Files/SEGGER/JLink_V810c/JLinkGDBServerCL.exe",
+            "serverArgs": [],
+            "device": "NRF52840_XXAA",
+            "interface": "jtag",
+            "serialNumber": "", //If you have more than one J-Link probe, add the serial number here.
+            "svdFile": "${workspaceFolder}/svd/nrf52840.svd",
+            "armToolchainPath": "C:/gcc-arm-none-eabi/bin"
+        },
+        {
+            "name": "Test ACE OS",
+            "cwd": "${workspaceFolder}",
+            "executable": "${workspaceFolder}/ACE/Test_ace_os/_build/ace_os.out",
+            "request": "launch",
+            "type": "cortex-debug",
+            "runToEntryPoint": "main",
+            "servertype": "jlink",
+            "serverpath": "C:/Program Files/SEGGER/JLink_V810c/JLinkGDBServerCL.exe",
+            "serverArgs": [],
+            "device": "NRF52840_XXAA",
+            "interface": "jtag",
+            "serialNumber": "", //If you have more than one J-Link probe, add the serial number here.
+            "postLaunchCommands": ["monitor sleep 0", "monitor speed auto"],
+            "svdFile": "${workspaceFolder}/svd/nrf52840.svd",
+            "armToolchainPath": "C:/gcc-arm-none-eabi/bin"
+        },
+        {
+            "name": "Test ACE OS 2",
+            "cwd": "${workspaceFolder}",
+            "executable": "${workspaceFolder}/ACE/Test_ace_os_2/_build/ace_os.out",
+            "request": "launch",
+            "type": "cortex-debug",
+            "runToEntryPoint": "main",
+            "servertype": "jlink",
+            "serverpath": "C:/Program Files/SEGGER/JLink_V810c/JLinkGDBServerCL.exe",
+            "serverArgs": [],
+            "device": "NRF52840_XXAA",
+            "interface": "jtag",
+            "serialNumber": "", //If you have more than one J-Link probe, add the serial number here.
+            "postLaunchCommands": ["monitor sleep 0", "monitor speed auto"],
+            "svdFile": "${workspaceFolder}/svd/nrf52840.svd",
+            "armToolchainPath": "C:/gcc-arm-none-eabi/bin"
+        }
+    ]
+}

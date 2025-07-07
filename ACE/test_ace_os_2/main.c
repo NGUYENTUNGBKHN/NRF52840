@@ -1,0 +1,92 @@
+/******************************************************************************/
+/*! @addtogroup Group2
+    @file       main.c
+    @brief      
+    @date       2025/06/30
+    @author     Development Dept at Tokyo (nguyen-thanh-tung@jcm-hq.co.jp)
+    @par        Revision
+    $Id$
+    @par        Copyright (C)
+    Japan CashMachine Co, Limited. All rights reserved.
+******************************************************************************/
+
+#include <stdint.h>
+#include <stdio.h>
+#include "Trace/ace_trace.h"
+#include "hal_systick.h"
+#include "ace_api.h"
+
+#define STACK_SIZE 256
+
+void delay(uint32_t count)
+{
+    count *= 640000;
+    volatile uint32_t i = 0;
+    for (i = 0; i < count; i++)
+    {
+        __asm("nop");
+    }
+}
+
+
+/* 64MHz */
+#define CPU_CLOCK_HZ 64000000
+
+/* 100 ms per tick. */
+#define TICK_RATE_HZ 10
+
+void systick_init()
+{
+    hal_systick_val_clear();
+    hal_systick_load_set(CPU_CLOCK_HZ/TICK_RATE_HZ - 1);
+    hal_systick_csr_set(
+        HAL_SYSTICK_CSR_CLKSOURCE_CPU |
+        HAL_SYSTICK_CSR_TICKINT_ENABLE |
+        HAL_SYSTICK_CSR_ENABLE);
+}
+
+static void busy_loop(void *str)
+{
+	while (1) {
+		ace_trace_log(": %s Running...\n",str);
+		delay(1);
+	}
+}
+
+void test1(void *userdata)
+{
+	busy_loop(userdata);
+}
+
+void test2(void *userdata)
+{
+	busy_loop(userdata);
+}
+
+// void test3(void *userdata)
+// {
+// 	busy_loop(userdata);
+// }
+
+
+int main()
+{
+    ace_trace_init();
+    ace_trace_log("Hello !!\n");
+    const char *str1 = "Task1", *str2 = "Task2", *str3 = "Task3";
+
+	if (_ace_thread_create( (void *) str1, STACK_SIZE, test1) == -1)
+		ace_trace_log("Thread 1 creation failed\r\n");
+
+	if (_ace_thread_create( (void *) str2, STACK_SIZE, test2) == -1)
+		ace_trace_log("Thread 2 creation failed\r\n");
+
+	// if (thread_create(test3, (void *) str3) == -1)
+	// 	ace_trace_log("Thread 3 creation failed\r\n");
+    systick_init();
+    _ace_thread_start();
+    while (1)
+    {
+
+    }
+}
