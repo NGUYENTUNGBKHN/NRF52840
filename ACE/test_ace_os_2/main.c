@@ -18,6 +18,9 @@
 
 #define STACK_SIZE 256
 
+ACE_THREAD task1;
+ACE_THREAD task2;
+
 void delay(uint32_t count)
 {
     count *= 640000;
@@ -72,19 +75,19 @@ void test2(void *userdata)
 int main()
 {
     ace_trace_init();
-    ace_trace_log("Hello !!\n");
+    ace_trace_log("Hello %lu !!\n",sizeof(ACE_THREAD));
     const char *str1 = "Task1", *str2 = "Task2", *str3 = "Task3";
 
-	if (_ace_thread_create( (void *) str1, STACK_SIZE, test1) == -1)
+	if (_ace_thread_create(&task1, (void *) str1, STACK_SIZE, test1) == -1)
 		ace_trace_log("Thread 1 creation failed\r\n");
 
-	if (_ace_thread_create( (void *) str2, STACK_SIZE, test2) == -1)
+	if (_ace_thread_create(&task2, (void *) str2, STACK_SIZE, test2) == -1)
 		ace_trace_log("Thread 2 creation failed\r\n");
 
 	// if (thread_create(test3, (void *) str3) == -1)
 	// 	ace_trace_log("Thread 3 creation failed\r\n");
     systick_init();
-    _ace_thread_start();
+    _ace_initialize_kernel_enter();
     while (1)
     {
 

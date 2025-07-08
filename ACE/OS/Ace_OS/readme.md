@@ -1,5 +1,7 @@
 ## Note somem command line 
 
+CBZ is compare and branch if Zero
+
 
 In ace_port.h : 
 __attribute__( ( always_inline ) ) : 

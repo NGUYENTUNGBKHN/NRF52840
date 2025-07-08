@@ -19,22 +19,7 @@ Device "NRF52832_XXAA" selected.
 
 Connecting to target via SWD
 InitTarget() start
-InitTarget() end - Took 26.6ms
-Found SW-DP with ID 0x2BA01477
-DPv0 detected
-CoreSight SoC-400 or earlier
-Scanning AP map to find all available APs
-AP[2]: Stopped AP scan as end of AP map has been reached
-AP[0]: AHB-AP (IDR: 0x24770011, ADDR: 0x00000000)
-AP[1]: JTAG-AP (IDR: 0x02880000, ADDR: 0x01000000)
-Iterating through AP map to find AHB-AP to use
-AP[0]: Skipped. Could not read CPUID register
-AP[1]: Skipped. Not an AHB-AP
-Attach to CPU failed. Executing connect under reset.
-Failed to power up DAP
-Connect fallback: Reset via Reset pin & Connect.
-InitTarget() start
-InitTarget() end - Took 26.6ms
+InitTarget() end - Took 27.3ms
 Found SW-DP with ID 0x2BA01477
 DPv0 detected
 CoreSight SoC-400 or earlier
@@ -59,14 +44,14 @@ ROMTbl[0] @ E00FF000
 Memory zones:
   Zone: "Default" Description: Default access mode
 Cortex-M4 identified.
-PC = 00000DDA, CycleCnt = 0012D6BD
-R0 = 2000055B, R1 = 20000910, R2 = 00000400, R3 = 00000000
-R4 = FFFFFFFF, R5 = 000003FF, R6 = 200000A4, R7 = 00000000
-R8 = 00000013, R9 = 200000A4, R10= 00000018, R11= 20000910
+PC = 000004AC, CycleCnt = 7CF1C801
+R0 = 20000068, R1 = 20000074, R2 = 20000DE0, R3 = 20000098
+R4 = 00000587, R5 = 00000530, R6 = 21000000, R7 = 2001FF94
+R8 = 0009C400, R9 = 00001330, R10= 0007822B, R11= 00000000
 R12= 00000000
-SP(R13)= 200008B8, MSP= 2001FFF8, PSP= 200008B8, R14(LR) = 00000DB5
-XPSR = 81000000: APSR = Nzcvq, EPSR = 01000000, IPSR = 000 (NoException)
-CFBP = 03000000, CONTROL = 03, FAULTMASK = 00, BASEPRI = 00, PRIMASK = 00
+SP(R13)= 2001FF94, MSP= 2001FF94, PSP= 20000DE0, R14(LR) = FFFFFFF1
+XPSR = 21000003: APSR = nzCvq, EPSR = 01000000, IPSR = 003 (HardFault)
+CFBP = 01000000, CONTROL = 01, FAULTMASK = 00, BASEPRI = 00, PRIMASK = 00
 
 FPS0 = 00000000, FPS1 = 00000000, FPS2 = 00000000, FPS3 = 00000000
 FPS4 = 00000000, FPS5 = 00000000, FPS6 = 00000000, FPS7 = 00000000
@@ -84,8 +69,8 @@ Reset: Halt core after reset via DEMCR.VC_CORERESET.
 Reset: Reset device via AIRCR.SYSRESETREQ.
 Downloading file [_build/ace_os.hex]...
 J-Link: Flash download: Bank 0 @ 0x00000000: 2 ranges affected (12288 bytes)
-J-Link: Flash download: Total: 0.459s (Prepare: 0.064s, Compare: 0.009s, Erase: 0.255s, Program & Verify: 0.095s, Restore: 0.034s)
-J-Link: Flash download: Program & Verify speed: 126 KB/s
+J-Link: Flash download: Total: 0.556s (Prepare: 0.072s, Compare: 0.066s, Erase: 0.260s, Program & Verify: 0.120s, Restore: 0.036s)
+J-Link: Flash download: Program & Verify speed: 100 KB/s
 O.K.
 J-Link>r
 Reset delay: 0 ms

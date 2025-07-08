@@ -29,6 +29,7 @@ extern uint32_t lastTask;
 extern ACE_THREAD ace_thread[MAX_TASKS];
 extern uint32_t _ace_thread_created_count;
 extern ACE_THREAD *_ace_thread_creatd_ptr;
+extern ACE_THREAD *_ace_thread_current_ptr;
 
 /* THREAD ERROR */
 enum THREAD_ERROR_CODE
@@ -37,6 +38,8 @@ enum THREAD_ERROR_CODE
     THREAD_ERROR_ID_INVALID,
     THREAD_ERROR_FAIL
 };
+
+extern void _ace_thread_schedule(void);
 
 #ifdef __cplusplus
 }

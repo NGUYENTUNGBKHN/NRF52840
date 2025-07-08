@@ -34,8 +34,8 @@ typedef struct ACE_THREAD_STRUCT_S
 }ACE_THREAD;
 
 
-void _ace_thread_start();
 uint32_t _ace_thread_create(ACE_THREAD *thread_ptr, char *name_thread, uint32_t stack_size, void (*entry_thread)(void*));
+void _ace_initialize_kernel_enter(void);
 
 #ifdef __cplusplus
 }

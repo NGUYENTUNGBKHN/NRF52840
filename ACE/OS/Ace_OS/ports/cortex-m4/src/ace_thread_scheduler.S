@@ -2,45 +2,44 @@
 #define SCB_ICSR            0xE000ED04
 #define SCB_ICSR_PENDSVSET  0x10000000
     .global lastTask
+    .global _ace_excution_thread_exit
+    .global _ace_thread_current_ptr
+    .global _ace_thread_creatd_ptr
     .global ace_thread
     .text
     .align 4
     .syntax unified
     @ SCB_ICSR            EQU     0xE000ED04    // Address register ICSR
     @ SCB_ICSR_PENDSVSET  EQU     0x10000000    // bit PENDSVSET (Bit 28)
-// VOID   _ace_thread_start(VOID)
+// VOID   _ace_thread_schedule(VOID)
 // {
-    .global _ace_thread_start
+    .global _ace_thread_schedule
     .thumb_func
-_ace_thread_start:
-    // lastTask = 0;
-    MOV R0, #0
-    LDR R2, =lastTask
-    STR R0, [R2, #0]
-    // Reset APSR
-    MOV R0, #0
-    MSR APSR_nzcvq, R0
-    // Move the task's stack pointer address into R0
-    LDR R0, =lastTask
-    LDR R0, [R0]
-    LDR R1, =ace_thread
+_ace_thread_schedule:
+    LDR R0, =_ace_thread_current_ptr
+    LDR R1, =_ace_thread_creatd_ptr     
+    CBZ R1, __loop                      // If _ace_thread_created_ptr = NULL
 
-    LDR R2, =28
-    MUL R0, R0, R2
-    ADD R1, R1, R0
+    LDR R2, [R1]                        // Get value _ace_thread_created_ptr
+    STR R2, [R0]                        // Store it in _ace_thread_current_ptr
 
-    LDR R0, [R1, #8]
+    MOV R2, #0
+    MSR APSR_nzcvq, R2
 
-    MSR PSP, R0
-    MOV R0, #3
-    MSR CONTROL, R0
-    ISB
+    LDR R2, [R0]
+    LDR R1, [R2, #8]
+    MSR PSP, R1
+    MOV R2, #3
+    MSR CONTROL, R2
+    ISB 
 
-    POP     {R4-R11, LR}
-    LDR     R0, [SP]
-    LDR     PC, [SP, #24] 
-loop:
-    b loop
+    POP {R4 - R11, LR}
+    LDR R0, [SP]
+
+    LDR PC, [SP, #24]
+
+__loop:                                   // wait pendSV event to happen
+    b __loop
 // }
 
 // void SysTick_Handler()
@@ -67,64 +66,34 @@ SysTick_Handler:
     .syntax unified
     .thumb_func
 PendSV_Handler:
-    /* Save the old task's context */
-    MRS     R0, PSP                        
-    STMDB   R0!, {R4-R11, LR}               
-     /* To get the task pointer address from result r0 */
-    // This part stores the *saved* stack pointer (now in R0) into the current task's ACE_THREAD structure.
-    // First, load the lastTask index.
-    LDR     R1, =lastTask                   
-    LDR     R2, [R1]                        
+    @ CPSID   i                           // Disable interrupt
+    @ PUSH    {R0, LR}                    // Save LR
+    @ BL      _ace_excution_thread_exit   // Call exit function
+    @ POP     {R0, LR}
+    @ CPSIE   i                           // Enable interrupt
 
-    // Calculate the address of ace_thread[lastTask]
-    LDR     R3, =ace_thread                
-    MOV     R4, #28            
-    MUL     R2, R2, R4                      
-    ADD     R3, R3, R2                      
-
-    // Store the saved stack pointer (R0) into ace_thread[lastTask].ace_thread_stack_ptr
-    STR     R0, [R3, #8] 
-
-    // /* Find a new task to run */
-scheduler_loop:
-    // lastTask++;
-    LDR     R0, =lastTask                   
-    LDR     R1, [R0]                        
-    ADD     R1, R1, #1                      
-
-    // if (lastTask == MAX_STACKS)
-    LDR     R2, =MAX_TASKS                 
-    CMP     R1, R2                         
-    BNE     skip_reset_lastTask          
-
-    // lastTask = 0;
-    MOV     R1, #0                       
-
-skip_reset_lastTask:
-    STR     R1, [R0]                      
-
-    // if (ace_thread[lastTask].ace_in_use)
-    // lastTask is in R1
-    MOV     R0, R1                       
-
-    LDR     R1, =ace_thread              
+    /* Store old context */
+    MRS     R0, PSP
+    STMDB   R0!, {R4-R11, LR}
     
-    // Calculate the address of ace_thread[lastTask]
-    LDR     R2, =28          
-    MUL     R0, R0, R2                      
-    ADD     R1, R1, R0                     
 
-    // Load ace_in_use (offset 24 bytes from struct start)
-    LDRB    R0, [R1, #24]
-    CMP     R0, #0                         
-    BEQ     scheduler_loop              
+    /* thread current = next of thread current */
+    LDR     R1, =_ace_thread_current_ptr
+    LDR     R2, [R1]
+    STR     R0, [R2, #8]
 
-    /* Move the task's stack pointer address into r0 */
-    LDR     R0, [R1, #8] 
+    LDR     R3, [R2, #28]
+    STR     R3, [R1]
 
-    /* Restore the new task's context and jump to the task */
-    LDMIA   R0!, {R4-R11, LR}               
+    LDR     R2, [R3, #24]
+    CBZ     R2, __ace_ts_wait
+    /* Recover PSP and preserve current thread context. */
+    LDR     R2, [R3, #8]
+    LDMIA   R2!, {R4-R11, LR}
+    MSR     PSP, R2
 
-    MSR     PSP, R0
     BX      LR
+
+__ace_ts_wait:
+    b __ace_ts_wait
 // }

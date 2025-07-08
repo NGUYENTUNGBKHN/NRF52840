@@ -16,61 +16,9 @@ uint32_t _tx_thread_created_count = 0;
 
 void _ace_thread_exit();
 
-ACE_THREAD ace_thread[MAX_TASKS];
+ACE_THREAD *_ace_thread_current_ptr;
 ACE_THREAD *_ace_thread_creatd_ptr;
 uint32_t lastTask;
-
-// void __attribute__((naked)) PendSV_Handler()
-// {
-// 	/* Save the old task's context[1]*/
-// 	asm volatile("mrs   r0, psp\n"
-// 	             "stmdb r0!, {r4-r11, lr}\n");
-// 	/* To get the task pointer address from result r0 */
-// 	asm volatile("mov   %0, r0\n" : "=r" (ace_thread[lastTask].ace_thread_stack_ptr));
-
-// 	/* Find a new task to run */
-// 	while (1) {
-// 		lastTask++;
-// 		if (lastTask == MAX_STACKS)
-// 			lastTask = 0;
-// 		if (ace_thread[lastTask].ace_in_use) 
-//         {
-// 			/* Move the task's stack pointer address into r0 */
-// 			asm volatile("mov r0, %0\n" : : "r" (ace_thread[lastTask].ace_thread_stack_ptr));
-// 			/* Restore the new task's context and jump to the task */
-// 			asm volatile("ldmia r0!, {r4-r11, lr}\n"
-// 			             "msr psp, r0\n"
-// 			             "bx lr\n");
-// 		}
-// 	}
-// }
-
-// void SysTick_Handler()
-// {
-// 	*SCB_ICSR |= SCB_ICSR_PENDSVSET;
-// }
-
-// void __attribute__((naked)) _ace_thread_start()
-// {
-//     lastTask = 0;
-
-//     /* Reset APSR register. */
-//     asm volatile("MOV r0, #0\n"
-//                  "MSR APSR_nzcvq, r0\n");
-//     /* move the task's stack pointer address into r0. */
-//     asm volatile("mov r0, %0\n" : : "r" (ace_thread[lastTask].ace_thread_stack_ptr));
-// 	asm volatile("msr psp, r0\n"
-// 	             "mov r0, #3\n"
-// 	             "msr control, r0\n"
-// 	             "isb\n");
-
-//     asm volatile("pop {r4-r11, lr}\n"
-// 	             "ldr r0, [sp]\n");
-    
-//     asm volatile("ldr pc, [sp, #24]\n");
-
-//     while (1);
-// }
 
 /* Build a fake interrupt frame. The form of the fake interrupt stack 
     on the Cortex-M should look like the following after it is built :
@@ -105,14 +53,14 @@ uint32_t _ace_thread_create(ACE_THREAD *thread_ptr, char *name_thread, uint32_t 
     ACE_THREAD *next_thread;
     ACE_THREAD *pre_thread;
     /* Check threadID empty */
-    for (threadID = 0; threadID < MAX_TASKS; threadID++)
-    {
-        if (ace_thread[threadID].ace_in_use == 0)
-            break;
-    }
+    // for (threadID = 0; threadID < MAX_TASKS; threadID++)
+    // {
+    //     if (ace_thread[threadID].ace_in_use == 0)
+    //         break;
+    // }
     /* Determine threadID with MAX value. */
-    if (threadID == MAX_TASKS)
-        return -1;
+    // if (threadID == MAX_TASKS)
+    //     return -1;
     /* Allocate dynamic memory for thread stack */
     stack = (uint32_t*)malloc(stack_size* sizeof(uint32_t)); 
     
@@ -120,10 +68,10 @@ uint32_t _ace_thread_create(ACE_THREAD *thread_ptr, char *name_thread, uint32_t 
     {
         return -1;
     }
-    ace_thread[threadID].ace_thread_id = threadID;
-    ace_thread[threadID].ace_thread_stack_start = stack;
+    thread_ptr->ace_thread_id = threadID;
+    thread_ptr->ace_thread_stack_start = stack;
     stack += (stack_size - 17);
-    ace_thread[threadID].ace_thread_stack_ptr = stack;
+    thread_ptr->ace_thread_stack_ptr = stack;
     *stack++ = (uint32_t)(0);                       /* R4 */
     *stack++ = (uint32_t)(0);                       /* R5 */
     *stack++ = (uint32_t)(0);                       /* R6 */
@@ -141,8 +89,8 @@ uint32_t _ace_thread_create(ACE_THREAD *thread_ptr, char *name_thread, uint32_t 
     *stack++ = (uint32_t) &_ace_thread_exit;        /* lr */
     *stack++ = (uint32_t)entry_thread;              /* pc */
     *stack   = (uint32_t)0x01000000;                /* xPSR */
-    ace_thread[threadID].ace_thread_stack_end = stack;
-    ace_thread[threadID].ace_in_use = 1;
+    thread_ptr->ace_thread_stack_end = stack;
+    thread_ptr->ace_in_use = 1;
 
 
     // thread_ptr
@@ -161,6 +109,9 @@ uint32_t _ace_thread_create(ACE_THREAD *thread_ptr, char *name_thread, uint32_t 
 
         next_thread->ace_thread_created_previous = thread_ptr;
         pre_thread->ace_thread_created_next = thread_ptr;
+
+        thread_ptr->ace_thread_created_previous = pre_thread;
+        thread_ptr->ace_thread_created_next = next_thread;
     }
 
     _tx_thread_created_count++;
@@ -170,17 +121,17 @@ uint32_t _ace_thread_create(ACE_THREAD *thread_ptr, char *name_thread, uint32_t 
 
 void _ace_thread_kill(uint32_t thread_id)
 {
-    ace_thread[thread_id].ace_in_use = 0;
+    // ace_thread[thread_id].ace_in_use = 0;
 
-    /* Free thread stack. */
-    free(ace_thread[thread_id].ace_thread_stack_start);
+    // /* Free thread stack. */
+    // free(ace_thread[thread_id].ace_thread_stack_start);
 }
 
 void _ace_thread_exit()
 {
-    asm volatile ("cpsid i\n");
-    _ace_thread_kill(lastTask);
-    asm volatile ("cpsie i\n");
+    // asm volatile ("cpsid i\n");
+    // _ace_thread_kill(lastTask);
+    // asm volatile ("cpsie i\n");
 
     while(1);
 }

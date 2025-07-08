@@ -19,6 +19,7 @@ CFLAG+= $(CPU) $(FPU) $(FLOAT) $(OPT)
 SRC_EXCLUDE=\
 
 SRC_INCLUDE+=$(wildcard $(COMMON)/src/thread/*.c)
+SRC_INCLUDE+=$(wildcard $(COMMON)/src/*.c)
 SRC_INCLUDE+=$(wildcard $(CORE)/src/*.c)
 SRC_INCLUDE+=$(wildcard $(CORE)/src/*.S)
 
