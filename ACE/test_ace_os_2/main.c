@@ -20,6 +20,7 @@
 
 ACE_THREAD task1;
 ACE_THREAD task2;
+ACE_THREAD task3;
 
 void delay(uint32_t count)
 {
@@ -48,28 +49,40 @@ void systick_init()
         HAL_SYSTICK_CSR_ENABLE);
 }
 
-static void busy_loop(void *str)
+static void busy_loop(uint32_t id)
 {
 	while (1) {
-		ace_trace_log(": %s Running...\n",str);
-		delay(1);
+		ace_trace_log("--> Task %d Running...\n",id);
+        if (id == 1)
+        {
+            // _ace_thread_suspend(&task1);
+        }
+        else if (id == 2)
+        {
+            _ace_thread_suspend(&task2);
+        }
+        else if (id == 3)
+        {
+            // _ace_thread_suspend(&task3);
+        }
+        delay(1);
 	}
 }
 
-void test1(void *userdata)
+void test1(uint32_t userdata)
 {
 	busy_loop(userdata);
 }
 
-void test2(void *userdata)
+void test2(uint32_t userdata)
 {
 	busy_loop(userdata);
 }
 
-// void test3(void *userdata)
-// {
-// 	busy_loop(userdata);
-// }
+void test3(uint32_t userdata)
+{
+	busy_loop(userdata);
+}
 
 
 int main()
@@ -84,8 +97,8 @@ int main()
 	if (_ace_thread_create(&task2, (void *) str2, STACK_SIZE, test2) == -1)
 		ace_trace_log("Thread 2 creation failed\r\n");
 
-	// if (thread_create(test3, (void *) str3) == -1)
-	// 	ace_trace_log("Thread 3 creation failed\r\n");
+	if (_ace_thread_create(&task3, (void *) str3, STACK_SIZE, test3) == -1)
+		ace_trace_log("Thread 3 creation failed\r\n");
     systick_init();
     _ace_initialize_kernel_enter();
     while (1)

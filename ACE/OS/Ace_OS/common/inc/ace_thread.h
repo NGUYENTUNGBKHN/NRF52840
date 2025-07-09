@@ -18,18 +18,23 @@ extern "C"
 #endif
 
 /* CODE */
-#define MAX_TASKS 2
+
 
 /* Exception return behavior */
 #define HANDLER_MSP	0xFFFFFFF1
 #define THREAD_MSP	0xFFFFFFF9 
 #define THREAD_PSP	0xFFFFFFFD
 
-extern uint32_t lastTask;
-extern ACE_THREAD ace_thread[MAX_TASKS];
 extern uint32_t _ace_thread_created_count;
-extern ACE_THREAD *_ace_thread_creatd_ptr;
+extern ACE_THREAD *_ace_thread_created_ptr;
 extern ACE_THREAD *_ace_thread_current_ptr;
+extern uint32_t _ace_thread_system_state;
+
+
+#ifndef ACE_THREAD_GET_CURRENT
+#define ACE_THREAD_GET_CURRENT(a)       (a) = _ace_thread_current_ptr;
+#endif
+
 
 /* THREAD ERROR */
 enum THREAD_ERROR_CODE
@@ -40,6 +45,8 @@ enum THREAD_ERROR_CODE
 };
 
 extern void _ace_thread_schedule(void);
+
+extern void _ace_thread_system_suspend(ACE_THREAD *thread_ptr);
 
 #ifdef __cplusplus
 }

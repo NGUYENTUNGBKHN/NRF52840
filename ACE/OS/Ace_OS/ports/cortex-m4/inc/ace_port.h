@@ -24,6 +24,16 @@ extern "C"
 
 #undef ACE_PORT_USE_BASEPRI
 
+__attribute__( ( always_inline ) ) static inline unsigned int __get_ipsr_value(void)
+{
+unsigned int  ipsr_value;
+    __asm__ volatile (" MRS  %0,IPSR ": "=r" (ipsr_value) );
+    return(ipsr_value);
+}
+
+#define ACE_THREAD_GET_SYSTEM_STATE()        (_ace_thread_system_state | __get_ipsr_value())
+
+
 /* Define the interrupt disable/restore macros for each compiler. */
 
 __attribute__( ( always_inline ) ) static inline uint32_t __get_interrupt_posture()
@@ -72,14 +82,27 @@ __attribute__( ( always_inline ) ) static inline uint32_t __disable_interrupt()
 
 __attribute__( ( always_inline ) ) static inline void  _ace_thread_system_return_inline()
 {
-    
+    unsigned int interrupt_save;
+
+    /* Set PendSV to invoke ThreadX scheduler.  */
+    *((volatile uint32_t *) 0xE000ED04) = ((uint32_t) 0x10000000);
+    if (__get_ipsr_value() == 0)
+    {
+        interrupt_save = __get_interrupt_posture();
+#ifdef ACE_PORT_USE_BASEPRI
+        __set_basepri_value(0);
+#else
+        __enable_interrupt();
+#endif
+        __restore_interrupt(interrupt_save);
+    }
 }
 
 #define ACE_INTERRUPT_SAVE_AREA         uint32_t interrupt_save;
 #define ACE_DISABLE                     interrupt_save = __disable_interrupt();
 #define ACE_RESTORE                     __restore_interrupt(interrupt_save);
 
-
+#define _ace_thread_system_return                _ace_thread_system_return_inline
 
 
 #ifdef __cplusplus

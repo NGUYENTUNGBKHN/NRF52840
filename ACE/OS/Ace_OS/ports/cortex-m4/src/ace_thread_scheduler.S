@@ -1,11 +1,9 @@
 
 #define SCB_ICSR            0xE000ED04
 #define SCB_ICSR_PENDSVSET  0x10000000
-    .global lastTask
     .global _ace_excution_thread_exit
     .global _ace_thread_current_ptr
-    .global _ace_thread_creatd_ptr
-    .global ace_thread
+    .global _ace_thread_created_ptr
     .text
     .align 4
     .syntax unified
@@ -17,7 +15,7 @@
     .thumb_func
 _ace_thread_schedule:
     LDR R0, =_ace_thread_current_ptr
-    LDR R1, =_ace_thread_creatd_ptr     
+    LDR R1, =_ace_thread_created_ptr     
     CBZ R1, __loop                      // If _ace_thread_created_ptr = NULL
 
     LDR R2, [R1]                        // Get value _ace_thread_created_ptr
@@ -48,16 +46,11 @@ __loop:                                   // wait pendSV event to happen
     .syntax unified
     .thumb_func
 SysTick_Handler:
-    // load address SCB_ICSR to R0
-    LDR R0, =SCB_ICSR
-    // load value of SCB_ICSR to R1
-    LDR R1, [R0]
-    // R1 |= SCB_ICSR_PENDSVSET;
-    ORR R1, R1, #SCB_ICSR_PENDSVSET
-    // store value to R0
-    STR     R1, [R0]
-    // jmup return 
-    BX      LR
+    LDR R0, =SCB_ICSR                   // load address SCB_ICSR to R0
+    LDR R1, [R0]                        // load value of SCB_ICSR to R1
+    ORR R1, R1, #SCB_ICSR_PENDSVSET     // R1 |= SCB_ICSR_PENDSVSET;
+    STR     R1, [R0]                    // store value to R0
+    BX      LR                          // jmup return 
 // }
 
 // void PendSV_Handler()
