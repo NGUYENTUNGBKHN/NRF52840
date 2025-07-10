@@ -1,20 +1,22 @@
-TARGET_NAME=ace
-BUILD_DIR=_build
-OBJ_DIR=$(BUILD_DIR)/obj
+# Makefile created library project
+TARGET_NAME:=ace
+BUILD_DIR:=_build
+MAKE_COMMON:=../../Common
 LIB_OUTPUT_PATH = $(BUILD_DIR)/$(TARGET_NAME).a
+# This is the root project directory and the core directory
+ROOT_PROJ:=./
+# Core directory for the project
 COMMON=./common/
 CORE=./ports/cortex-m4/
 
-# TOOLCHAIN
-CAR=arm-none-eabi-ar
-CC=arm-none-eabi-gcc
 
-# CFLAG
-
+# This is the Flags for the compiler
 CPU=-mcpu=cortex-m4 -mthumb -mabi=aapcs
 FPU=-mfloat-abi=hard -mfpu=fpv4-sp-d16
 OPT=-O0 -g3
-CFLAG+= $(CPU) $(FPU) $(FLOAT) $(OPT)
+CCFLAGS+= $(CPU) $(FPU) $(FLOAT) $(OPT)
+
+ASMFLAG=$(CCFLAGS)
 
 SRC_EXCLUDE=\
 
@@ -30,36 +32,26 @@ INC_FOLDERS=\
 	$(CORE)/inc\
 
 
-OBJ_FILES:=$(foreach obj_file, $(SRC_FILES), $(OBJ_DIR)/$(obj_file).o)
-# OBJ_FILES = $(patsubst %.c, $(OBJ_DIR)/%.o,$(SRC_FILES))
-# OBJ_FILES += $(patsubst %.S, $(OBJ_DIR)/%.S.o,$(SRC_FILES))
+.PHONY:	default help
 
-# $(info $(OBJ_FILES))
+default: $(TARGET_NAME)
 
-INC+=$(foreach inc, $(INC_FOLDERS), -I$(inc))
+# Include common makefile. File contains TOOLCHAIN directory and rules for building targets
+include $(MAKE_COMMON)/Makefile.common
 
-.PHONY: all
+# Call function to define targets 
+$(call define_library, $(TARGET_NAME), $(LIB_OUTPUT_PATH))
 
-all: $(LIB_OUTPUT_PATH)
+define create_library
+@echo Creating library: $($@)
+$(NO_ECHO)$(AR) $($@) $^
+@echo Done
+endef
+ace:
+	$(create_library)
 
-$(OBJ_DIR)/%.c.o: %.c
-	@echo "Compiling $(notdir $<)"
-	@mkdir -p $(shell dirname $@)
-	@$(CC) $(CFLAG) $(INC) -c $< -o $@
-
-$(OBJ_DIR)/%.S.o: %.S
-	@echo "Compiling $(notdir $<)"
-	@mkdir -p $(shell dirname $@)
-	@$(CC) $(CFLAG) $(INC) -c $< -o $@
-
-
-$(LIB_OUTPUT_PATH): $(OBJ_FILES)
-	@echo "Compiling $(notdir $@)"
-	@mkdir -p $(shell dirname $@)
-	@$(CAR) -r $@ $(OBJ_FILES)  
-
-	
-clean: 
-	rm -r $(BUILD_DIR)
+# Help target
+help:
+	@echo  help
 
 

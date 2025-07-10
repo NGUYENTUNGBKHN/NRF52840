@@ -12,15 +12,6 @@
 #include "ace_api.h"
 #include "ace_thread.h"
 
-#define SCB_ICSR            0xE000ED04
-#define SCB_ICSR_PENDSVSET  0x10000000
-
-void _ace_trigger_scheduler()
-{
-    *((volatile uint32_t *)SCB_ICSR) = SCB_ICSR_PENDSVSET;
-    
-}
-
 void _ace_thread_system_suspend(ACE_THREAD *thread_ptr)
 {
     ACE_INTERRUPT_SAVE_AREA
@@ -71,20 +62,8 @@ void _ace_thread_system_suspend(ACE_THREAD *thread_ptr)
     // we need to trigger a context switch to find the next active thread.
     if (current_thread == thread_ptr) 
     {
-        if (_ace_thread_created_count == 0)
-        {
-            _ace_thread_current_ptr = NULL;
-        }
-        else
-        {
-            _ace_thread_current_ptr = _ace_thread_created_ptr;
-            // _ace_thread_system_return();
-            _ace_trigger_scheduler();
-        }
+        _ace_thread_current_ptr = NULL;
+        _ace_thread_system_return();
     }
-
-    
 }
-
-
 

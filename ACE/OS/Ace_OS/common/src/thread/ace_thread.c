@@ -286,9 +286,6 @@ uint32_t _ace_thread_suspend(ACE_THREAD *thread_ptr)
     if (thread_ptr->ace_thread_state == ACE_READY)
     {
         status = ACE_SUCCESS;
-        
-        
-
     }
 
     if (status == ACE_SUCCESS)

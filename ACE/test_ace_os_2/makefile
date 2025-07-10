@@ -78,7 +78,7 @@ INC_FOLDERS=\
 	$(OS_DIR)/ports/cortex-m4/inc\
 
 
-LIBS+=$(OS_DIR)/_build/ace.a
+LIBS=$(OS_DIR)/_build/ace.a
 # LIBS+=-lc -lm
 
 

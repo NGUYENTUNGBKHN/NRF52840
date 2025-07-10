@@ -1,9 +1,9 @@
-TARGET_NAME=tx
+TARGET_NAME=ace
 BUILD_DIR=_build
 OBJ_DIR=$(BUILD_DIR)/obj
 LIB_OUTPUT_PATH = $(BUILD_DIR)/$(TARGET_NAME).a
 COMMON=./common/
-CORE=./port/cortex-m4/
+CORE=./ports/cortex-m4/
 
 # TOOLCHAIN
 CAR=arm-none-eabi-ar
@@ -13,11 +13,12 @@ CC=arm-none-eabi-gcc
 
 CPU=-mcpu=cortex-m4 -mthumb -mabi=aapcs
 FPU=-mfloat-abi=hard -mfpu=fpv4-sp-d16
-OPT=-O0 -g
+OPT=-O0 -g3
 CFLAG+= $(CPU) $(FPU) $(FLOAT) $(OPT)
 
 SRC_EXCLUDE=\
 
+SRC_INCLUDE+=$(wildcard $(COMMON)/src/thread/*.c)
 SRC_INCLUDE+=$(wildcard $(COMMON)/src/*.c)
 SRC_INCLUDE+=$(wildcard $(CORE)/src/*.c)
 SRC_INCLUDE+=$(wildcard $(CORE)/src/*.S)

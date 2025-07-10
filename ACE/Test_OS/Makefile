@@ -22,7 +22,7 @@ $(BUILD_DIR)/$(TARGET_NAME).out: \
 # This is the Flags for the compiler
 CPU=-mcpu=cortex-m4 -mthumb -mabi=aapcs
 FPU=-mfloat-abi=hard -mfpu=fpv4-sp-d16
-OPT=-O3 -g3
+OPT=-O0 -g3
 CCFLAGS+=$(CPU) $(FPU) $(OPT)
 CCFLAGS+=-ffunction-sections -fdata-sections -fno-strict-aliasing
 CCFLAGS+=-fno-builtin -fshort-enums

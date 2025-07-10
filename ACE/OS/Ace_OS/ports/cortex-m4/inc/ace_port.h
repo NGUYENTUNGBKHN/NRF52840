@@ -102,7 +102,7 @@ __attribute__( ( always_inline ) ) static inline void  _ace_thread_system_return
 #define ACE_DISABLE                     interrupt_save = __disable_interrupt();
 #define ACE_RESTORE                     __restore_interrupt(interrupt_save);
 
-#define _ace_thread_system_return                _ace_thread_system_return_inline
+#define _ace_thread_system_return()                _ace_thread_system_return_inline
 
 
 #ifdef __cplusplus

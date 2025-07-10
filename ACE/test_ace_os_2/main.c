@@ -53,18 +53,6 @@ static void busy_loop(uint32_t id)
 {
 	while (1) {
 		ace_trace_log("--> Task %d Running...\n",id);
-        if (id == 1)
-        {
-            // _ace_thread_suspend(&task1);
-        }
-        else if (id == 2)
-        {
-            _ace_thread_suspend(&task2);
-        }
-        else if (id == 3)
-        {
-            // _ace_thread_suspend(&task3);
-        }
         delay(1);
 	}
 }
