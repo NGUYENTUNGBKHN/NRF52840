@@ -19,7 +19,7 @@ Device "NRF52832_XXAA" selected.
 
 Connecting to target via SWD
 InitTarget() start
-InitTarget() end - Took 26.6ms
+InitTarget() end - Took 26.5ms
 Found SW-DP with ID 0x2BA01477
 DPv0 detected
 CoreSight SoC-400 or earlier
@@ -44,14 +44,14 @@ ROMTbl[0] @ E00FF000
 Memory zones:
   Zone: "Default" Description: Default access mode
 Cortex-M4 identified.
-PC = 00000848, CycleCnt = 0681D27B
-R0 = 20000068, R1 = 2000006C, R2 = 00000845, R3 = 00000000
-R4 = 00000000, R5 = 00000000, R6 = 00000000, R7 = 2001FF74
+PC = 000016F4, CycleCnt = 40C7153A
+R0 = 200003D3, R1 = 20000D73, R2 = 20000D73, R3 = 200003D2
+R4 = 00000000, R5 = 00000000, R6 = 00000000, R7 = 20000CE0
 R8 = 00000000, R9 = 00000000, R10= 00000000, R11= 00000000
 R12= 00000000
-SP(R13)= 2001FF74, MSP= 2001FF74, PSP= 200011D8, R14(LR) = FFFFFFF1
-XPSR = 01000003: APSR = nzcvq, EPSR = 01000000, IPSR = 003 (HardFault)
-CFBP = 00000000, CONTROL = 00, FAULTMASK = 00, BASEPRI = 00, PRIMASK = 00
+SP(R13)= 20000CE0, MSP= 2001FF98, PSP= 20000CE0, R14(LR) = 0000127D
+XPSR = 61000000: APSR = nZCvq, EPSR = 01000000, IPSR = 000 (NoException)
+CFBP = 02002000, CONTROL = 02, FAULTMASK = 00, BASEPRI = 20, PRIMASK = 00
 
 FPS0 = 00000000, FPS1 = 00000000, FPS2 = 00000000, FPS3 = 00000000
 FPS4 = 00000000, FPS5 = 00000000, FPS6 = 00000000, FPS7 = 00000000
@@ -62,16 +62,15 @@ FPS20= 00000000, FPS21= 00000000, FPS22= 00000000, FPS23= 00000000
 FPS24= 00000000, FPS25= 00000000, FPS26= 00000000, FPS27= 00000000
 FPS28= 00000000, FPS29= 00000000, FPS30= 00000000, FPS31= 00000000
 FPSCR= 00000000
-J-Link>loadfile _build/ace_os.hex
-'loadfile': Performing implicit reset & halt of MCU.
+J-Link>erase
+No address range specified, 'Erase Chip' will be executed
+'erase': Performing implicit reset & halt of MCU.
 Reset type: NORMAL (https://wiki.segger.com/J-Link_Reset_Strategies)
 Reset: Halt core after reset via DEMCR.VC_CORERESET.
 Reset: Reset device via AIRCR.SYSRESETREQ.
-Downloading file [_build/ace_os.hex]...
-J-Link: Flash download: Bank 0 @ 0x00000000: 2 ranges affected (12288 bytes)
-J-Link: Flash download: Total: 0.594s (Prepare: 0.074s, Compare: 0.078s, Erase: 0.261s, Program & Verify: 0.142s, Restore: 0.035s)
-J-Link: Flash download: Program & Verify speed: 84 KB/s
-O.K.
+Erasing device...
+J-Link: Flash download: Total time needed: 0.845s (Prepare: 0.466s, Compare: 0.000s, Erase: 0.276s, Program: 0.000s, Verify: 0.000s, Restore: 0.102s)
+Erasing done.
 J-Link>r
 Reset delay: 0 ms
 Reset type: NORMAL (https://wiki.segger.com/J-Link_Reset_Strategies)

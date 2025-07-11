@@ -51,8 +51,18 @@ void systick_init()
 
 static void busy_loop(uint32_t id)
 {
+    uint32_t c = 0;
 	while (1) {
 		ace_trace_log("--> Task %d Running...\n",id);
+        c = SEGGER_RTT_GetKey();
+        if (c == 0x31)
+        {
+            _ace_thread_suspend(&task1);
+        }
+        else if (c == 0x32)
+        {
+            _ace_thread_resume(&task1);
+        }
         delay(1);
 	}
 }

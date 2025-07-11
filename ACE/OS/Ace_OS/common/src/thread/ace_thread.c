@@ -237,7 +237,10 @@ uint32_t _ace_thread_reset(ACE_THREAD *thread_ptr)
 
 uint32_t _ace_thread_resume(ACE_THREAD *thread_ptr)
 {
-
+    if (thread_ptr->ace_thread_state == ACE_SUSPENDED)
+    {
+        
+    }
 }
 
 uint32_t _ace_thread_sleep(uint32_t timer_ticks)

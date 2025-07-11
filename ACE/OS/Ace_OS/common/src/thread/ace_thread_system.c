@@ -16,9 +16,7 @@ void _ace_thread_system_suspend(ACE_THREAD *thread_ptr)
 {
     ACE_INTERRUPT_SAVE_AREA
     ACE_THREAD       *current_thread;
-    uint32_t status ;
-
-    status = ACE_SUCCESS;
+    
     ACE_THREAD_GET_CURRENT(current_thread)
 
     ACE_DISABLE
@@ -65,5 +63,16 @@ void _ace_thread_system_suspend(ACE_THREAD *thread_ptr)
         _ace_thread_current_ptr = NULL;
         _ace_thread_system_return();
     }
+}
+
+void _ace_thread_system_resume(ACE_THREAD *thread_ptr)
+{
+    ACE_INTERRUPT_SAVE_AREA
+
+
+
+    ACE_DISABLE
+
+    ACE_RESTORE
 }
 

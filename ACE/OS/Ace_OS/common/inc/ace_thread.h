@@ -48,6 +48,8 @@ extern void _ace_thread_schedule(void);
 
 extern void _ace_thread_system_suspend(ACE_THREAD *thread_ptr);
 
+extern void _ace_thread_system_resume(ACE_THREAD *thread_ptr);
+
 #ifdef __cplusplus
 }
 #endif
