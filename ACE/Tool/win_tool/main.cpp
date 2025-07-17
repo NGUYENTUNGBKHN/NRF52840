@@ -32,8 +32,12 @@ int main(int num_arg, char *arg[])
 
         if (strArgs == "-f" || strArgs == "--flash")
         {
-            test.flash("abc");
-            break;
+            if (arg[i + 1] != "")
+            {
+                test.flash(arg[i + 1]);
+                break;
+            }
+            
         }
         else if (strArgs == "-e" || strArgs == "--erase")
         {
